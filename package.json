@@ -1,7 +1,7 @@
 {
   "name": "stackorbitai-vibe-coding-prompt-improver",
   "version": "1.0.0",
-  "description": "Vibe Coding Prompt Improver desktop utility",
+  "description": "Vibe Coding Prompt Improver desktop utility — Cross-platform background service to enhance coding prompts with AI.",
   "main": "dist/main/index.js",
   "author": "StackOrbitAI <support@stackorbitai.com>",
   "license": "MIT",
@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "electron-store": "^8.1.0",
+    "electron-updater": "^6.1.7",
     "framer-motion": "^11.2.10",
     "lucide-react": "^0.395.0",
     "react": "^19.0.0",
@@ -49,11 +50,20 @@
     "extraResources": [
       {
         "from": "bin/sendkeys.exe",
-        "to": "bin/sendkeys.exe"
+        "to": "bin/sendkeys.exe",
+        "filter": ["**/*"]
       }
     ],
     "asar": true,
+    "publish": {
+      "provider": "github",
+      "owner": "StackOrbitAI",
+      "repo": "stackorbitAI-vibe-coding-prompt-improver-mac-win-linux",
+      "private": false,
+      "releaseType": "release"
+    },
     "mac": {
+      "icon": "build/icon.icns",
       "category": "public.app-category.productivity",
       "target": [
         {
@@ -63,33 +73,56 @@
             "arm64"
           ]
         }
-      ]
+      ],
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
     },
     "win": {
+      "icon": "build/icon.ico",
       "target": [
         {
           "target": "nsis",
           "arch": [
-            "x64"
+            "x64",
+            "arm64"
           ]
         }
-      ]
+      ],
+      "artifactName": "${productName}-Setup-${version}-${arch}.${ext}"
     },
     "linux": {
+      "icon": "build/icon.png",
+      "category": "Development",
       "target": [
         {
           "target": "AppImage",
           "arch": [
-            "x64"
+            "x64",
+            "arm64"
           ]
         },
         {
           "target": "deb",
           "arch": [
-            "x64"
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "rpm",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "tar.gz",
+          "arch": [
+            "x64",
+            "arm64"
           ]
         }
-      ]
+      ],
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
     },
     "nsis": {
       "oneClick": false,
