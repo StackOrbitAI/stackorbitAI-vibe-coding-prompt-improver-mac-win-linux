@@ -1,6 +1,6 @@
 {
   "name": "stackorbitai-vibe-coding-prompt-improver",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Vibe Coding Prompt Improver desktop utility",
   "main": "dist/main/index.js",
   "author": "StackOrbitAI <support@stackorbitai.com>",
