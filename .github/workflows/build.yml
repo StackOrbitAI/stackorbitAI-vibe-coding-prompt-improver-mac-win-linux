@@ -1,0 +1,203 @@
+name: Build & Release — All Platforms
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  # ═══════════════════════════════════════════
+  # Windows Build (.exe NSIS installer)
+  # x64 + arm64
+  # ═══════════════════════════════════════════
+  build-windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [x64, arm64]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Compile C# keyboard simulator (sendkeys.exe)
+        shell: cmd
+        run: |
+          if not exist bin mkdir bin
+          C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /out:bin\sendkeys.exe src\main\services\sendkeys.cs
+
+      - name: Build renderer and main process
+        run: npm run build
+
+      - name: Package Windows ${{ matrix.arch }}
+        run: npx electron-builder --win --${{ matrix.arch }} --publish never
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-${{ matrix.arch }}
+          path: |
+            release/*.exe
+            release/*.exe.blockmap
+          retention-days: 5
+
+  # ═══════════════════════════════════════════
+  # macOS Build (.dmg installer)
+  # x64 (Intel) + arm64 (Apple Silicon M1/M2/M3/M4)
+  # ═══════════════════════════════════════════
+  build-macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        arch: [x64, arm64]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build renderer and main process
+        run: npm run build
+
+      - name: Package macOS ${{ matrix.arch }}
+        run: npx electron-builder --mac --${{ matrix.arch }} --publish never
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-${{ matrix.arch }}
+          path: |
+            release/*.dmg
+            release/*.dmg.blockmap
+          retention-days: 5
+
+  # ═══════════════════════════════════════════
+  # Linux Build (.AppImage, .deb, .rpm, .tar.gz)
+  # x64 + arm64
+  # ═══════════════════════════════════════════
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x64, arm64]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install system dependencies for electron-builder
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm libarchive-tools
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build renderer and main process
+        run: npm run build
+
+      - name: Package Linux ${{ matrix.arch }}
+        run: npx electron-builder --linux --${{ matrix.arch }} --publish never
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.arch }}
+          path: |
+            release/*.AppImage
+            release/*.deb
+            release/*.rpm
+            release/*.tar.gz
+          retention-days: 5
+
+  # ═══════════════════════════════════════════
+  # Create GitHub Release with all artifacts
+  # ═══════════════════════════════════════════
+  release:
+    needs: [build-windows, build-macos, build-linux]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: List all downloaded artifacts
+        run: find artifacts -type f | head -50
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name || 'v1.0.0' }}
+          name: "🚀 Vibe Coding Prompt Improver ${{ github.ref_name || 'v1.0.0' }}"
+          body: |
+            ## stackorbitAI — Vibe Coding Prompt Improver
+
+            Cross-platform desktop utility that runs in the background, captures selected text on a global shortcut, enhances it using AI, and pastes the improved prompt back.
+
+            ### 📦 Downloads
+
+            #### 🪟 Windows
+            - **x64** (Intel/AMD 64-bit): `stackorbitai-vibe-coding-prompt-improver-Setup-*.exe`
+            - **arm64** (ARM Windows): `stackorbitai-vibe-coding-prompt-improver-Setup-*-arm64.exe`
+
+            #### 🍎 macOS
+            - **arm64** (Apple Silicon M1/M2/M3/M4): `stackorbitai-vibe-coding-prompt-improver-*-arm64.dmg`
+            - **x64** (Intel Mac): `stackorbitai-vibe-coding-prompt-improver-*-x64.dmg`
+
+            #### 🐧 Linux
+            - **AppImage** (Universal portable): `stackorbitai-vibe-coding-prompt-improver-*.AppImage`
+            - **Debian/Ubuntu** (.deb): `stackorbitai-vibe-coding-prompt-improver-*.deb`
+            - **Fedora/RHEL** (.rpm): `stackorbitai-vibe-coding-prompt-improver-*.rpm`
+            - **tar.gz** (Generic): `stackorbitai-vibe-coding-prompt-improver-*.tar.gz`
+
+            ### 🔧 First Run
+            1. Install and launch the app.
+            2. Open **Settings** from the system tray icon.
+            3. Add your API key (OpenAI, Claude, Gemini, or OpenRouter).
+            4. Select your preferred global shortcut (default: `Ctrl+Shift+P`).
+            5. Select text in any app, press the shortcut, and watch the magic!
+          draft: false
+          prerelease: false
+          files: |
+            artifacts/**/*.exe
+            artifacts/**/*.exe.blockmap
+            artifacts/**/*.dmg
+            artifacts/**/*.dmg.blockmap
+            artifacts/**/*.AppImage
+            artifacts/**/*.deb
+            artifacts/**/*.rpm
+            artifacts/**/*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
