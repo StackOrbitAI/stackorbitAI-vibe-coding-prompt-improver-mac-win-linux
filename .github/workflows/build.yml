@@ -157,32 +157,24 @@ jobs:
           tag_name: ${{ github.ref_name || 'v1.0.0' }}
           name: "🚀 Vibe Coding Prompt Improver ${{ github.ref_name || 'v1.0.0' }}"
           body: |
-            ## stackorbitAI — Vibe Coding Prompt Improver
+            ## 📥 Direct Release Download Links
 
-            Cross-platform desktop utility that runs in the background, captures selected text on a global shortcut, enhances it using AI, and pastes the improved prompt back.
+            ### 🪟 Windows (.exe)
+            - **Windows x64 (Standard 64-bit PC)**: `stackorbitai-vibe-coding-prompt-improver-Setup-x64.exe`
+            - **Windows ARM64 (Snapdragon / Surface)**: `stackorbitai-vibe-coding-prompt-improver-Setup-arm64.exe`
+            - **Windows Universal**: `stackorbitai-vibe-coding-prompt-improver-Setup.exe`
 
-            ### 📦 Downloads
+            ### 🍎 macOS (.dmg)
+            - **Apple Silicon (M1 / M2 / M3 / M4)**: `stackorbitai-vibe-coding-prompt-improver-arm64.dmg`
+            - **Intel Mac (x64)**: `stackorbitai-vibe-coding-prompt-improver-x64.dmg`
 
-            #### 🪟 Windows
-            - **x64** (Intel/AMD 64-bit): `stackorbitai-vibe-coding-prompt-improver-Setup-*.exe`
-            - **arm64** (ARM Windows): `stackorbitai-vibe-coding-prompt-improver-Setup-*-arm64.exe`
-
-            #### 🍎 macOS
-            - **arm64** (Apple Silicon M1/M2/M3/M4): `stackorbitai-vibe-coding-prompt-improver-*-arm64.dmg`
-            - **x64** (Intel Mac): `stackorbitai-vibe-coding-prompt-improver-*-x64.dmg`
-
-            #### 🐧 Linux
-            - **AppImage** (Universal portable): `stackorbitai-vibe-coding-prompt-improver-*.AppImage`
-            - **Debian/Ubuntu** (.deb): `stackorbitai-vibe-coding-prompt-improver-*.deb`
-            - **Fedora/RHEL** (.rpm): `stackorbitai-vibe-coding-prompt-improver-*.rpm`
-            - **tar.gz** (Generic): `stackorbitai-vibe-coding-prompt-improver-*.tar.gz`
-
-            ### 🔧 First Run
-            1. Install and launch the app.
-            2. Open **Settings** from the system tray icon.
-            3. Add your API key (OpenAI, Claude, Gemini, or OpenRouter).
-            4. Select your preferred global shortcut (default: `Ctrl+Shift+P`).
-            5. Select text in any app, press the shortcut, and watch the magic!
+            ### 🐧 Linux (.AppImage / .deb / .rpm)
+            - **AppImage (Portable x64)**: `stackorbitai-vibe-coding-prompt-improver.AppImage`
+            - **AppImage (Portable arm64)**: `stackorbitai-vibe-coding-prompt-improver-arm64.AppImage`
+            - **Debian / Ubuntu (.deb amd64)**: `stackorbitai-vibe-coding-prompt-improver_amd64.deb`
+            - **Debian / Ubuntu (.deb arm64)**: `stackorbitai-vibe-coding-prompt-improver_arm64.deb`
+            - **Fedora / RHEL (.rpm x86_64)**: `stackorbitai-vibe-coding-prompt-improver.x86_64.rpm`
+            - **Fedora / RHEL (.rpm aarch64)**: `stackorbitai-vibe-coding-prompt-improver.aarch64.rpm`
           draft: false
           prerelease: false
           files: |
