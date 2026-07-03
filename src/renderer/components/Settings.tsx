@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Key, Keyboard, Check, Loader2, Save, X, RefreshCw, AlertCircle, ArrowUpRight, Download, Sparkles, FileText, Image as ImageIcon, ExternalLink, Plus, Trash2, Edit3 } from 'lucide-react';
+import { Key, Keyboard, Check, Loader2, Save, X, RefreshCw, AlertCircle, ArrowUpRight, Download, Sparkles, FileText, Image as ImageIcon, ExternalLink, Plus, Trash2, Edit3, BookOpen, HelpCircle, ShieldAlert, Terminal } from 'lucide-react';
 import { AppSettings, ReleaseItem, DEFAULT_PROMPT_PRESETS, PromptPreset } from '../../types/settings';
 
 declare global {
@@ -43,7 +43,7 @@ function isNewerSemver(current: string, latest: string): boolean {
 }
 
 export default function Settings() {
-  const [activeTab, setActiveTab] = useState<'api' | 'modes' | 'shortcut' | 'updates'>('api');
+  const [activeTab, setActiveTab] = useState<'api' | 'modes' | 'shortcut' | 'guide' | 'updates'>('api');
   const [appVersion, setAppVersion] = useState('1.0.0');
   const [checkingUpdates, setCheckingUpdates] = useState(false);
   const [updateStatus, setUpdateStatus] = useState<string | null>(null);
@@ -343,6 +343,19 @@ export default function Settings() {
             <Keyboard className="w-4 h-4" />
             <span>Shortcut</span>
           </button>
+
+          <button
+            onClick={() => setActiveTab('guide')}
+            className={`w-full flex items-center space-x-2 px-3 py-2.5 rounded-lg text-sm transition-all font-medium ${
+              activeTab === 'guide'
+                ? 'bg-brand-600/15 text-brand-500 border-l-2 border-brand-500 font-semibold'
+                : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
+            }`}
+          >
+            <BookOpen className="w-4 h-4 text-emerald-400" />
+            <span>User Guide</span>
+          </button>
+
           <button
             onClick={() => setActiveTab('updates')}
             className={`w-full flex items-center space-x-2 px-3 py-2.5 rounded-lg text-sm transition-all font-medium ${
@@ -622,6 +635,90 @@ export default function Settings() {
                 </div>
               </div>
             </div>
+          ) : activeTab === 'guide' ? (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Documentation & User Guide</h2>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Complete instructions on shortcuts, custom prompts, updates, and process management:</p>
+                </div>
+              </div>
+
+              <div className="space-y-4 max-h-[460px] overflow-y-auto pr-1">
+                {/* Guide Section 1: Shortcuts */}
+                <div className="p-4 rounded-xl border border-slate-900 bg-slate-900/30 space-y-2.5">
+                  <div className="flex items-center space-x-2 text-brand-400">
+                    <Keyboard className="w-4 h-4" />
+                    <h3 className="text-xs font-bold uppercase tracking-wide text-slate-200">1. How to Use & Change Activation Shortcuts</h3>
+                  </div>
+                  <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed font-sans">
+                    <li><b>Default Hotkey</b>: <code className="bg-slate-800 px-1.5 py-0.5 rounded font-mono text-brand-300">Ctrl+Shift+P</code> (Windows/Linux) or <code className="bg-slate-800 px-1.5 py-0.5 rounded font-mono text-brand-300">Cmd+Shift+P</code> (Mac).</li>
+                    <li><b>How to Change</b>: Go to the <b>Shortcut</b> tab in Settings, click the recorder box, press your preferred key combination, click <b>Done</b>, and then click <b>Save Settings</b>.</li>
+                    <li><b>Usage</b>: Highlight any prompt in VS Code, Cursor, Chrome, or ChatGPT and press your hotkey. The app automatically enhances your prompt and pastes it back!</li>
+                  </ul>
+                </div>
+
+                {/* Guide Section 2: Custom Prompts */}
+                <div className="p-4 rounded-xl border border-slate-900 bg-slate-900/30 space-y-2.5">
+                  <div className="flex items-center space-x-2 text-brand-400">
+                    <Sparkles className="w-4 h-4" />
+                    <h3 className="text-xs font-bold uppercase tracking-wide text-slate-200">2. How to Setup & Add Custom Library Prompts</h3>
+                  </div>
+                  <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed font-sans">
+                    <li>Go to the <b>Prompt Library</b> tab and click <b>+ Add Custom Preset</b>.</li>
+                    <li>Enter a Title (e.g. <i>Correct Prompt in English Without Meaning Change</i>), a short description, and your exact AI System Instruction.</li>
+                    <li>Click <b>Save & Set Active Default</b>.</li>
+                    <li>Your selected preset displays an <span className="bg-brand-500/20 text-brand-400 px-1.5 py-0.5 rounded text-[10px] font-semibold">Active Default</span> badge. Whenever you press the shortcut, the AI will use your active library preset!</li>
+                  </ul>
+                </div>
+
+                {/* Guide Section 3: Downloading Updates */}
+                <div className="p-4 rounded-xl border border-slate-900 bg-slate-900/30 space-y-2.5">
+                  <div className="flex items-center space-x-2 text-brand-400">
+                    <Download className="w-4 h-4" />
+                    <h3 className="text-xs font-bold uppercase tracking-wide text-slate-200">3. How to Download & Update to New Versions</h3>
+                  </div>
+                  <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed font-sans">
+                    <li>Go to the <b>Updates</b> tab in Settings and click <b>Check for Updates Now</b>.</li>
+                    <li>When a new version is available, click <b>Download & Relaunch Update</b> or download direct installer binaries (<code className="text-amber-400 font-mono">.exe</code>, <code className="text-amber-400 font-mono">.dmg</code>, <code className="text-amber-400 font-mono">.AppImage</code>).</li>
+                    <li>Clicking <i>Download & Relaunch Update</i> automatically closes tray icons and exits running processes so installation completes smoothly.</li>
+                  </ul>
+                </div>
+
+                {/* Guide Section 4: Process Kill / Stop */}
+                <div className="p-4 rounded-xl border border-rose-500/20 bg-rose-500/[0.02] space-y-2.5">
+                  <div className="flex items-center space-x-2 text-rose-400">
+                    <ShieldAlert className="w-4 h-4" />
+                    <h3 className="text-xs font-bold uppercase tracking-wide text-rose-300">4. How to Stop / Kill Existing Running Instance Before Installing</h3>
+                  </div>
+                  <div className="text-xs text-slate-300 space-y-2 leading-relaxed">
+                    <p>If you encounter a <i>"File in use / cannot be closed"</i> error when launching a new installer, stop the background process using one of these methods:</p>
+                    
+                    <div className="p-2.5 rounded-lg bg-dark-900 border border-slate-800 space-y-1">
+                      <div className="font-semibold text-slate-200 flex items-center space-x-1">
+                        <Terminal className="w-3.5 h-3.5 text-brand-400 mr-1" />
+                        <span>Windows Command Line (CMD / PowerShell):</span>
+                      </div>
+                      <code className="text-[11px] text-brand-300 font-mono bg-slate-950 p-1.5 rounded block">
+                        taskkill /F /IM stackorbitai-vibe-coding-prompt-improver.exe
+                      </code>
+                    </div>
+
+                    <div className="p-2.5 rounded-lg bg-dark-900 border border-slate-800 space-y-1">
+                      <div className="font-semibold text-slate-200">System Tray Exit:</div>
+                      <p className="text-[11px] text-slate-400">Right-click the Vibe Improver icon in your Windows Taskbar notification area (near clock) and click <b>Quit</b>.</p>
+                    </div>
+
+                    <div className="p-2.5 rounded-lg bg-dark-900 border border-slate-800 space-y-1">
+                      <div className="font-semibold text-slate-200">macOS Terminal:</div>
+                      <code className="text-[11px] text-brand-300 font-mono bg-slate-950 p-1.5 rounded block">
+                        pkill stackorbitai-vibe-coding-prompt-improver
+                      </code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           ) : (
             <div className="space-y-6">
               <div className="space-y-3">
@@ -703,7 +800,7 @@ export default function Settings() {
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Latest Release Notes</h3>
                 </div>
                 <div className="p-4 rounded-xl border border-slate-900 bg-slate-900/30 text-xs text-slate-300 leading-relaxed font-mono whitespace-pre-wrap max-h-40 overflow-y-auto">
-                  {settings.latestReleaseNotes || `• v${appVersion}: Strict semver version sorting and latest release download integration.`}
+                  {settings.latestReleaseNotes || `• v${appVersion}: Embedded User Guide, custom prompt library, and auto-updater.`}
                 </div>
               </div>
 
@@ -742,7 +839,7 @@ export default function Settings() {
                           <span className="text-[9px] bg-slate-800 text-slate-400 px-1 rounded font-mono">Cursor Overlay</span>
                         </div>
                         <p className="text-[10px] text-slate-300 font-mono">
-                          Goal: Implement custom prompt library presets...
+                          Goal: Implement user guide documentation...
                         </p>
                       </div>
                       <span className="text-[10px] text-slate-500">Floating HUD overlay pops up near cursor in any IDE or browser</span>
@@ -803,7 +900,7 @@ export default function Settings() {
                             <button
                               key={asset.name}
                               onClick={() => handleDownloadAndInstallUpdate(asset.downloadUrl)}
-                              className="text-[10px] px-2 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 rounded flex items-center space-x-1 transition-colors"
+                              className="text-[10px] px-2 py-1 bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 rounded flex items-center space-x-1 transition-colors"
                             >
                               <Download className="w-2.5 h-2.5 text-brand-400" />
                               <span className="truncate max-w-[140px]">{asset.name}</span>
