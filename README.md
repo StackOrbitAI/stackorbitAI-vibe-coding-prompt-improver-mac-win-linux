@@ -1,121 +1,113 @@
-# 🚀 stackorbitAI — Vibe Coding Prompt Improver
+<div align="center">
 
-A production-ready, ultra-lightweight cross-platform desktop application (macOS, Windows, and Linux) that runs silently in the background (tray), captures selected text on a global shortcut trigger, improves the raw coding prompt using an LLM in real-time, and inserts the enhanced prompt back into the active text field.
+<img src="https://img.shields.io/badge/version-1.0.0-blueviolet?style=for-the-badge" alt="Version 1.0.0"/>
+<img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-informational?style=for-the-badge" alt="Platforms"/>
+<img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="MIT License"/>
+<img src="https://img.shields.io/badge/Electron-React-blue?style=for-the-badge&logo=electron" alt="Electron + React"/>
 
-Ideal for enhancing prompts across ChatGPT, Claude.ai, Cursor, VS Code, or any browser/local text field.
+# ⚡ stackorbitAI — Vibe Coding Prompt Improver
 
----
+### The cross-platform background utility that supercharges your coding prompts using AI — in any app, instantly.
 
-## 🌟 Key Features
-
-* **Zero-Configuration Background Service**: Minimizes to system tray/menu bar on boot, listening globally.
-* **OS-Native Key Simulation (Anti-Gybe)**: Avoids heavy and buggy C++ native node module compilations (`robotjs`/`nut-js`) by leveraging fast native scripting:
-  * **Windows**: Spawns a compiled 10ms C# simulator (`bin/sendkeys.exe`).
-  * **macOS**: Spawns built-in AppleScript (`osascript`).
-  * **Linux**: Spawns `xdotool`.
-* **Glassmorphic Floating HUD**: Transparent overlay appears near the active cursor on trigger, displaying a streaming preview, custom animations, and a smooth token-based progress bar (0–100%).
-* **Encrypted API Settings Panel**: Sleek, minimal dark-themed interface containing 2 tabs ("API Keys" and "Shortcut") with encrypted local storage powered by `electron-store`.
-* **Dynamic Provider Suite**: Supports OpenAI (GPT), Anthropic Claude, Google Gemini (via OpenAI compatibility), and OpenRouter with real-time dynamic model fetching and static fallback drop-downs.
-* **Non-Disruptive Insertion**: Writes the enhanced prompt to the clipboard and pastes it back directly, immediately restoring the user's original clipboard content.
+</div>
 
 ---
 
-## 📂 File Structure
+## 📥 Download v1.0.0
 
-```
-stackorbitAI — Vibe Coding Prompt Improver/
-├── package.json                    # Main dependencies and build config
-├── tsconfig.json                   # TypeScript compiler configuration
-├── vite.config.ts                  # Vite configuration for bundling React Renderer
-├── tailwind.config.js              # Tailwind styling directives
-├── postcss.config.js               # CSS processing options
-├── .gitignore                      # Git exclusion list
-├── bin/
-│   └── sendkeys.exe                # [Compiled] Windows C# keyboard simulator binary
-├── scripts/
-│   └── dev.js                      # Local development runtime orchestrator
-├── src/
-│   ├── main/
-│   │   ├── index.ts                # Electron Main process and lifecycle
-│   │   ├── preload.ts              # Secure context-bridge IPC declarations
-│   │   └── services/
-│   │       ├── ai.ts               # SSE stream parser (OpenAI, Claude, OpenRouter, Gemini)
-│   │       ├── keyboard.ts         # OS-specific simulated key event wrappers
-│   │       ├── store.ts            # Encrypted setting configuration store
-│   │       └── sendkeys.cs         # C# keyboard simulator source code
-│   └── renderer/
-│       ├── index.html              # Main HTML mounting container
-│       ├── main.tsx                # React app mount script
-│       ├── index.css               # Tailwind imports and scrollbar declarations
-│       ├── App.tsx                 # Simple view router between Settings and HUD
-│       └── components/
-│           ├── Settings.tsx        # Configurations layout and hotkey recorder
-│           └── HUD.tsx             # Floating status progress window
-```
+> **Pick the right installer for your OS and chip below.**
+
+### 🪟 Windows
+
+| Architecture | Download |
+|---|---|
+| **Windows x64** (64-bit Intel/AMD — most PCs) | [⬇️ Download .exe (x64)](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.0/stackorbitai-vibe-coding-prompt-improver-Setup-1.0.0-x64.exe) |
+| **Windows ARM64** (Surface Pro X, Snapdragon PCs) | [⬇️ Download .exe (arm64)](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.0/stackorbitai-vibe-coding-prompt-improver-Setup-1.0.0-arm64.exe) |
+| **Windows Universal** (Both x64 + arm64 combined) | [⬇️ Download .exe (universal)](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.0/stackorbitai-vibe-coding-prompt-improver-Setup-1.0.0.exe) |
+
+### 🍎 macOS
+
+| Architecture | Download |
+|---|---|
+| **macOS Intel** (older Mac with Intel chip) | [⬇️ Download .dmg (x64)](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.0/stackorbitai-vibe-coding-prompt-improver-1.0.0-x64.dmg) |
+| **macOS Apple Silicon** (M1 / M2 / M3 / M4) | [⬇️ Download .dmg (arm64)](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.0/stackorbitai-vibe-coding-prompt-improver-1.0.0-arm64.dmg) |
+
+### 🐧 Linux
+
+| Format | Architecture | Download |
+|---|---|---|
+| **AppImage** (Universal, no install needed) | x86_64 (64-bit) | [⬇️ Download .AppImage](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.0/stackorbitai-vibe-coding-prompt-improver-1.0.0-x86_64.AppImage) |
+| **AppImage** (Universal) | arm64 | [⬇️ Download .AppImage (arm64)](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.0/stackorbitai-vibe-coding-prompt-improver-1.0.0-arm64.AppImage) |
+| **Debian / Ubuntu (.deb)** | amd64 (64-bit) | [⬇️ Download .deb](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.0/stackorbitai-vibe-coding-prompt-improver-1.0.0-amd64.deb) |
+| **Debian / Ubuntu (.deb)** | arm64 | [⬇️ Download .deb (arm64)](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.0/stackorbitai-vibe-coding-prompt-improver-1.0.0-arm64.deb) |
+| **RPM (Fedora / CentOS / RHEL)** | x86_64 | [⬇️ Download .rpm](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.0/stackorbitai-vibe-coding-prompt-improver-1.0.0-x86_64.rpm) |
+| **RPM** | aarch64 | [⬇️ Download .rpm (aarch64)](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.0/stackorbitai-vibe-coding-prompt-improver-1.0.0-aarch64.rpm) |
 
 ---
 
-## 🛠️ Installation & Setup (Local Development)
+## 🚀 What Does It Do?
 
-This workspace contains a portable Node.js toolchain located inside the `node/` folder. All commands execute locally without depending on system-wide Node/npm installations.
+**stackorbitAI Vibe Coding Prompt Improver** runs silently in the background (system tray / menu bar).
 
-### 1. Install Dependencies
-Run the command below in the project root folder. The `--legacy-peer-deps` flag prevents warnings from React 19:
+1. 📝 You type a rough, quick coding prompt in **any app** — ChatGPT, Claude.ai, Cursor, VS Code, Notepad, anything.
+2. ⌨️ Press your **global keyboard shortcut** (default: `Ctrl+Shift+Space` / `⌘+Shift+Space`)
+3. 🤖 The app **captures** the selected text, sends it to an AI model (OpenAI / Gemini / Anthropic), and gets back a **dramatically improved, professional-grade prompt**.
+4. 📋 The improved prompt is **automatically pasted** back into the same text field — no copy-paste needed.
+
+---
+
+## ✨ Key Features
+
+| Feature | Description |
+|---|---|
+| 🌐 **Works Everywhere** | Browser, IDE, any desktop app — no integration needed |
+| ⚡ **Global Shortcut** | Trigger from any window with a customizable hotkey |
+| 🤖 **Multi-AI Support** | OpenAI GPT-4o, Google Gemini, Anthropic Claude |
+| 🎨 **Beautiful HUD** | Floating overlay shows real-time AI enhancement |
+| 🔒 **Privacy First** | Your API keys stay local on your machine |
+| 🖥️ **System Tray** | Runs silently in background, zero distraction |
+| ⚙️ **Customizable** | Change shortcut, AI model, prompt style |
+
+---
+
+## 🛠️ Tech Stack
+
+- **Electron** — Cross-platform desktop shell
+- **React + TypeScript** — UI components
+- **Tailwind CSS** — Styling
+- **Vite** — Build tool
+- **electron-builder** — Cross-platform packaging (win/mac/linux)
+- **GitHub Actions** — Automated CI/CD builds and releases
+
+---
+
+## 🏗️ Build From Source
+
 ```bash
-# Windows (portable Node.js syntax)
-.\node\npm.cmd install --legacy-peer-deps
+# Clone the repo
+git clone https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux.git
+cd stackorbitAI-vibe-coding-prompt-improver-mac-win-linux
 
-# Standard (if Node.js is installed globally on your machine)
+# Install dependencies
 npm install --legacy-peer-deps
-```
 
-### 2. Run the Development Server
-Launches the React hot-reload Vite server and compiles the Electron main files in watch mode:
-```bash
-# Windows (portable Node.js syntax)
-.\node\npm.cmd run dev
-
-# Standard (if Node.js is installed globally on your machine)
+# Start in development mode
 npm run dev
+
+# Build for your current platform
+npm run package:win    # Windows
+npm run package:mac    # macOS
+npm run package:linux  # Linux
 ```
 
 ---
 
-## 📦 Production Builds (Cross-Platform Packing)
+## 📜 License
 
-We configure `electron-builder` to package assets and target each OS platform.
-
-### Windows (`.exe` NSIS installer)
-```bash
-# Compiles React renderer, main thread, and generates the Windows NSIS setup package
-.\node\npm.cmd run package:win
-```
-*Output file:* `release/stackorbitai-vibe-coding-prompt-improver-Setup-[version]-x64.exe`
-
-### macOS (`.dmg` Apple Silicon + Intel)
-Multi-arch DMG packaging compiles both `arm64` and `x64` binaries:
-```bash
-npm run package:mac
-```
-*Output file:* `release/stackorbitai-vibe-coding-prompt-improver-[version]-arm64.dmg` (for M1/M2/M3) and `release/stackorbitai-vibe-coding-prompt-improver-[version]-x64.dmg` (for Intel).
-
-### Linux (`.AppImage` and `.deb`)
-```bash
-npm run package:linux
-```
-*Output files:* `release/stackorbitai-vibe-coding-prompt-improver-[version].AppImage` and `release/stackorbitai-vibe-coding-prompt-improver_[version]_amd64.deb`.
+MIT © [StackOrbitAI](https://github.com/StackOrbitAI)
 
 ---
 
-## 📋 Implementation Details
-
-### Keyboard Simulation Implementation
-Instead of relying on native node packages which require C++ compilation, we delegate system-wide simulated copying and pasting to:
-* **Windows**: A custom compiled C# console app using `System.Windows.Forms.SendKeys` that takes an input key argument (e.g. `^c` for Ctrl+C, `^v` for Ctrl+V) and triggers it with a 100ms key-release buffer delay.
-* **macOS**: An AppleScript command executing keystrokes within `System Events`:
-  `osascript -e 'delay 0.1' -e 'tell application "System Events" to keystroke "c" using {command down}'`
-* **Linux**: A terminal tool execution:
-  `xdotool key ctrl+c`
-
-### Settings Store Encryption
-Credentials and API keys are stored in a local JSON config encrypted using AES-256-CBC, managed natively by `electron-store`'s `encryptionKey` option, protecting model API keys from plain-text file reading attacks.
+<div align="center">
+  Made with ❤️ by <a href="https://github.com/StackOrbitAI">StackOrbitAI</a>
+</div>
