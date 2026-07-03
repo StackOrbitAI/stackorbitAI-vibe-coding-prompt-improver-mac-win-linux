@@ -1,19 +1,14 @@
-import { store } from './store';
+import { store, DEFAULT_PROMPT_PRESETS } from './store';
 
-const SYSTEM_INSTRUCTION = `You are a World-Class AI Prompt Engineering Expert specializing in Vibe Coding and Agentic AI Assistants (such as Cursor, VS Code, Windsurf, Claude Code, GitHub Copilot, and ChatGPT).
-
-Your task:
-Take the user's raw, informal, or mixed-language (Hindi/Hinglish/English) prompt and transform it into an elite, highly structured, English coding instruction that produces flawless code from any AI model.
-
-Core Enhancement Rules:
-1. **Language & Clarity**: Convert any mixed language or informal text into clear, crisp, technical English.
-2. **Preserve & Elevate Intent**: Retain all core user requirements while adding implied technical specs (e.g. state management, error handling, component structure, performance edge-cases).
-3. **Structured Format**: Organize complex tasks with clean markdown sections:
-   - **Goal**: Concise summary of what needs to be built or fixed.
-   - **Requirements & Features**: Detailed step-by-step breakdown.
-   - **Technical Constraints**: Code style, modularity, edge cases, error handling.
-   - **Expected Output**: Exact deliverables required.
-4. **Zero Meta-Fluff**: Do NOT include conversational preambles, intros ("Here is your improved prompt:"), or wrapping markdown code blocks. Output ONLY the raw enhanced prompt ready to be pasted directly into an AI coding agent.`;
+function getSystemInstruction(): string {
+  const activeMode = store.get('activePromptMode') || 'vibe-coding';
+  const presets = store.get('customPresets') || DEFAULT_PROMPT_PRESETS;
+  const matched = presets.find((p) => p.id === activeMode);
+  if (matched && matched.instruction) {
+    return matched.instruction;
+  }
+  return DEFAULT_PROMPT_PRESETS[0].instruction;
+}
 
 export interface StreamCallbacks {
   onChunk: (text: string) => void;
@@ -23,6 +18,7 @@ export interface StreamCallbacks {
 
 export async function improvePrompt(rawPrompt: string, callbacks: StreamCallbacks): Promise<void> {
   const activeProvider = store.get('activeProvider');
+  const systemInstruction = getSystemInstruction();
   
   let url = '';
   let headers: Record<string, string> = {
@@ -41,7 +37,7 @@ export async function improvePrompt(rawPrompt: string, callbacks: StreamCallback
       body = {
         model,
         messages: [
-          { role: 'system', content: SYSTEM_INSTRUCTION },
+          { role: 'system', content: systemInstruction },
           { role: 'user', content: rawPrompt }
         ],
         stream: true,
@@ -58,7 +54,7 @@ export async function improvePrompt(rawPrompt: string, callbacks: StreamCallback
       body = {
         model,
         messages: [
-          { role: 'system', content: SYSTEM_INSTRUCTION },
+          { role: 'system', content: systemInstruction },
           { role: 'user', content: rawPrompt }
         ],
         stream: true,
@@ -68,13 +64,12 @@ export async function improvePrompt(rawPrompt: string, callbacks: StreamCallback
       const model = store.get('geminiModel') || 'gemini-1.5-flash';
       if (!apiKey) throw new Error('Google Gemini API Key is missing. Open Settings to add it.');
 
-      // We leverage Gemini's OpenAI-compatible endpoint for unified stream parsing
       url = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
       headers['Authorization'] = `Bearer ${apiKey}`;
       body = {
         model,
         messages: [
-          { role: 'system', content: SYSTEM_INSTRUCTION },
+          { role: 'system', content: systemInstruction },
           { role: 'user', content: rawPrompt }
         ],
         stream: true,
@@ -89,7 +84,7 @@ export async function improvePrompt(rawPrompt: string, callbacks: StreamCallback
       headers['anthropic-version'] = '2023-06-01';
       body = {
         model,
-        system: SYSTEM_INSTRUCTION,
+        system: systemInstruction,
         messages: [
           { role: 'user', content: rawPrompt }
         ],
@@ -136,7 +131,6 @@ export async function improvePrompt(rawPrompt: string, callbacks: StreamCallback
         const cleaned = line.trim();
         if (!cleaned) continue;
 
-        // OpenAI, Gemini OpenAI-compat, and OpenRouter SSE parser
         if (cleaned.startsWith('data: ')) {
           const dataStr = cleaned.slice(6);
           if (dataStr === '[DONE]') continue;
@@ -147,12 +141,9 @@ export async function improvePrompt(rawPrompt: string, callbacks: StreamCallback
               fullText += content;
               callbacks.onChunk(content);
             }
-          } catch (e) {
-            // Incomplete JSON line, ignore
-          }
+          } catch (e) {}
         }
 
-        // Anthropic Claude SSE parser
         if (cleaned.startsWith('data:')) {
           const dataStr = cleaned.slice(5).trim();
           try {
@@ -162,14 +153,11 @@ export async function improvePrompt(rawPrompt: string, callbacks: StreamCallback
               fullText += text;
               callbacks.onChunk(text);
             }
-          } catch (e) {
-            // Incomplete JSON line, ignore
-          }
+          } catch (e) {}
         }
       }
     }
 
-    // Flush any remaining buffer text
     if (buffer) {
       if (buffer.startsWith('data: ')) {
         const dataStr = buffer.slice(6);
