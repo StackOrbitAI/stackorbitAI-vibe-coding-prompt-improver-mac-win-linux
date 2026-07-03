@@ -12,6 +12,11 @@ export interface AppSettings {
   activeProvider: 'openai' | 'openrouter' | 'claude' | 'gemini';
   shortcut: string;
   isPaused: boolean;
+  // Update fields
+  lastUpdateCheck: number;
+  latestVersionAvailable: string;
+  isUpdateAvailable: boolean;
+  updateUrl: string;
 }
 
 const defaults: AppSettings = {
@@ -26,6 +31,10 @@ const defaults: AppSettings = {
   activeProvider: 'openai',
   shortcut: process.platform === 'darwin' ? 'Command+Shift+P' : 'Ctrl+Shift+P',
   isPaused: false,
+  lastUpdateCheck: 0,
+  latestVersionAvailable: '',
+  isUpdateAvailable: false,
+  updateUrl: '',
 };
 
 export const store = new Store<AppSettings>({
