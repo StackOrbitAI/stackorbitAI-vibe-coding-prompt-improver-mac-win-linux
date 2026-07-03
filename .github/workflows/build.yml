@@ -156,29 +156,7 @@ jobs:
         with:
           tag_name: ${{ github.ref_name || 'v1.0.0' }}
           name: "Vibe Coding Prompt Improver ${{ github.ref_name || 'v1.0.0' }}"
-          body: |
-            ### 🪟 Windows (.exe)
-            | Architecture | Download Link |
-            |---|---|
-            | **Windows x64** (Standard 64-bit PC — Recommended) | [⬇️ Download .exe (x64)](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/${{ github.ref_name }}/stackorbitai-vibe-coding-prompt-improver-Setup-${{ github.ref_name }}-x64.exe) |
-            | **Windows ARM64** (Snapdragon / Surface) | [⬇️ Download .exe (arm64)](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/${{ github.ref_name }}/stackorbitai-vibe-coding-prompt-improver-Setup-${{ github.ref_name }}-arm64.exe) |
-            | **Windows Universal** | [⬇️ Download .exe (Universal)](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/${{ github.ref_name }}/stackorbitai-vibe-coding-prompt-improver-Setup-${{ github.ref_name }}.exe) |
-
-            ### 🍎 macOS (.dmg)
-            | Chip Type | Download Link |
-            |---|---|
-            | **Apple Silicon (M1 / M2 / M3 / M4)** | [⬇️ Download .dmg (arm64)](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/${{ github.ref_name }}/stackorbitai-vibe-coding-prompt-improver-${{ github.ref_name }}-arm64.dmg) |
-            | **Intel Mac (x64)** | [⬇️ Download .dmg (x64)](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/${{ github.ref_name }}/stackorbitai-vibe-coding-prompt-improver-${{ github.ref_name }}.dmg) |
-
-            ### 🐧 Linux (.AppImage / .deb / .rpm)
-            | Package Format | Architecture | Download Link |
-            |---|---|---|
-            | **AppImage (x64)** | x86_64 | [⬇️ Download .AppImage](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/${{ github.ref_name }}/stackorbitai-vibe-coding-prompt-improver-${{ github.ref_name }}.AppImage) |
-            | **AppImage (arm64)** | arm64 | [⬇️ Download .AppImage (arm64)](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/${{ github.ref_name }}/stackorbitai-vibe-coding-prompt-improver-${{ github.ref_name }}-arm64.AppImage) |
-            | **Debian / Ubuntu (.deb)** | amd64 | [⬇️ Download .deb](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/${{ github.ref_name }}/stackorbitai-vibe-coding-prompt-improver_${{ github.ref_name }}_amd64.deb) |
-            | **Debian / Ubuntu (.deb)** | arm64 | [⬇️ Download .deb (arm64)](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/${{ github.ref_name }}/stackorbitai-vibe-coding-prompt-improver_${{ github.ref_name }}_arm64.deb) |
-            | **Fedora / RHEL (.rpm)** | x86_64 | [⬇️ Download .rpm](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/${{ github.ref_name }}/stackorbitai-vibe-coding-prompt-improver-${{ github.ref_name }}.x86_64.rpm) |
-            | **Fedora / RHEL (.rpm)** | aarch64 | [⬇️ Download .rpm (aarch64)](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/${{ github.ref_name }}/stackorbitai-vibe-coding-prompt-improver-${{ github.ref_name }}.aarch64.rpm) |
+          body: ""
           draft: false
           prerelease: false
           files: |
