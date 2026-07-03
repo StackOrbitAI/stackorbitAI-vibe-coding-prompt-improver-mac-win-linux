@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Key, Keyboard, Check, Loader2, Save, X, RefreshCw, AlertCircle, ArrowUpRight, Download, Sparkles, FileText, Image as ImageIcon, ExternalLink } from 'lucide-react';
-import { AppSettings, ReleaseItem } from '../../main/services/store';
+import { Key, Keyboard, Check, Loader2, Save, X, RefreshCw, AlertCircle, ArrowUpRight, Download, Sparkles, FileText, Image as ImageIcon, ExternalLink, SlidersHorizontal } from 'lucide-react';
+import { AppSettings, ReleaseItem, DEFAULT_PROMPT_PRESETS, PromptPreset } from '../../main/services/store';
 
 declare global {
   interface Window {
@@ -26,7 +26,7 @@ declare global {
 }
 
 export default function Settings() {
-  const [activeTab, setActiveTab] = useState<'api' | 'shortcut' | 'updates'>('api');
+  const [activeTab, setActiveTab] = useState<'api' | 'modes' | 'shortcut' | 'updates'>('api');
   const [appVersion, setAppVersion] = useState('1.0.0');
   const [checkingUpdates, setCheckingUpdates] = useState(false);
   const [updateStatus, setUpdateStatus] = useState<string | null>(null);
@@ -74,7 +74,7 @@ export default function Settings() {
       setModels((prev) => ({ ...prev, [provider]: fetchedModels }));
     } catch (e) {
       console.error(`Failed to fetch models for ${provider}`, e);
-    } finally {
+    } fontally {
       setLoadingModels((prev) => ({ ...prev, [provider]: false }));
     }
   };
@@ -101,6 +101,11 @@ export default function Settings() {
     const modelField = `${provider}Model` as keyof AppSettings;
     const updated = { ...settings, [modelField]: value } as AppSettings;
     setSettings(updated);
+  };
+
+  const handlePromptModeChange = (modeId: string) => {
+    if (!settings) return;
+    setSettings({ ...settings, activePromptMode: modeId });
   };
 
   const handleShortcutCapture = (e: React.KeyboardEvent) => {
@@ -198,6 +203,10 @@ export default function Settings() {
     );
   }
 
+  const activePresetsList = settings.customPresets && settings.customPresets.length > 0 
+    ? settings.customPresets 
+    : DEFAULT_PROMPT_PRESETS;
+
   return (
     <div className="w-full h-full flex flex-col justify-between bg-dark-950 text-slate-100 font-sans border border-slate-800/80 rounded-lg overflow-hidden select-none">
       {/* Title Header */}
@@ -234,6 +243,19 @@ export default function Settings() {
             <Key className="w-4 h-4" />
             <span>API Keys</span>
           </button>
+
+          <button
+            onClick={() => setActiveTab('modes')}
+            className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-sm transition-all font-medium ${
+              activeTab === 'modes'
+                ? 'bg-brand-600/15 text-brand-500 border-l-2 border-brand-500 font-semibold'
+                : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
+            }`}
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>Prompt Library</span>
+          </button>
+
           <button
             onClick={() => setActiveTab('shortcut')}
             className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-sm transition-all font-medium ${
@@ -343,13 +365,65 @@ export default function Settings() {
                 );
               })}
             </div>
+          ) : activeTab === 'modes' ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Prompt Library & Preset Modes</h2>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Select the default mode used when activating the global hotkey:</p>
+                </div>
+              </div>
+
+              <div className="space-y-2.5 max-h-[350px] overflow-y-auto pr-1">
+                {activePresetsList.map((preset) => {
+                  const isActive = (settings.activePromptMode || 'vibe-coding') === preset.id;
+
+                  return (
+                    <div
+                      key={preset.id}
+                      onClick={() => handlePromptModeChange(preset.id)}
+                      className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
+                        isActive
+                          ? 'border-brand-500/60 bg-brand-500/[0.04] shadow-[0_0_12px_rgba(99,102,241,0.1)]'
+                          : 'border-slate-900 bg-slate-900/20 hover:border-slate-800'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center space-x-2.5">
+                          <input
+                            type="radio"
+                            name="activePromptMode"
+                            checked={isActive}
+                            onChange={() => handlePromptModeChange(preset.id)}
+                            className="w-4 h-4 text-brand-500 focus:ring-brand-500 bg-slate-850 border-slate-700"
+                          />
+                          <span className={`text-xs font-bold ${isActive ? 'text-slate-100' : 'text-slate-300'}`}>
+                            {preset.name}
+                          </span>
+                        </div>
+
+                        {isActive && (
+                          <span className="text-[9px] bg-brand-500/20 text-brand-400 border border-brand-500/30 px-2 py-0.5 rounded-full font-semibold">
+                            Active Default
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="text-[11px] text-slate-400 mt-2 ml-6 leading-relaxed">
+                        {preset.description}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           ) : activeTab === 'shortcut' ? (
             <div className="space-y-4">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Global Activation Shortcut</h2>
               
               <div className="p-4 rounded-xl border border-slate-900 bg-slate-900/20 space-y-4">
                 <div className="text-xs text-slate-400 leading-relaxed">
-                  Press the hotkey combo in any input field to improve selected text. Customize it below:
+                  Press the hotkey combo in any input field to improve selected text using the active prompt mode. Customize it below:
                 </div>
 
                 <div className="flex flex-col space-y-2">
@@ -386,7 +460,6 @@ export default function Settings() {
             </div>
           ) : (
             <div className="space-y-6">
-              {/* Software Updates Header & Control */}
               <div className="space-y-3">
                 <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Software Updates & Automatic Service</h2>
                 
@@ -461,7 +534,7 @@ export default function Settings() {
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Latest Release Notes</h3>
                 </div>
                 <div className="p-4 rounded-xl border border-slate-900 bg-slate-900/30 text-xs text-slate-300 leading-relaxed font-mono whitespace-pre-wrap max-h-40 overflow-y-auto">
-                  {settings.latestReleaseNotes || `• v${appVersion}: Performance updates, native key simulation, and seamless auto-updater integration.`}
+                  {settings.latestReleaseNotes || `• v${appVersion}: Prompt Preset Library, performance updates, and native auto-updater integration.`}
                 </div>
               </div>
 
@@ -556,7 +629,6 @@ export default function Settings() {
                           </span>
                         </div>
 
-                        {/* Asset Buttons */}
                         <div className="flex flex-wrap gap-1.5">
                           {rel.assets.map((asset) => (
                             <button
@@ -586,9 +658,11 @@ export default function Settings() {
 
       {/* Footer Save Row */}
       <div className="px-6 py-3 border-t border-slate-900 bg-dark-900/60 flex items-center justify-between">
-        <span className="text-xs text-slate-500">
-          Active Provider: <span className="text-brand-500 font-semibold uppercase">{settings.activeProvider}</span>
-        </span>
+        <div className="flex items-center space-x-3 text-xs text-slate-500">
+          <span>Active Provider: <span className="text-brand-500 font-semibold uppercase">{settings.activeProvider}</span></span>
+          <span className="text-slate-800">•</span>
+          <span>Active Mode: <span className="text-brand-400 font-semibold">{settings.activePromptMode || 'vibe-coding'}</span></span>
+        </div>
         
         <button
           onClick={saveAllSettings}
