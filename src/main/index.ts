@@ -167,12 +167,12 @@ async function triggerEnhancementFlow() {
       return;
     }
 
-    // 4. Position and show HUD
+    // 4. Position and show HUD (inactive so active editor retains keyboard focus)
     if (!hudWindow) {
       createHUDWindow();
     }
     positionHUDNearCursor();
-    hudWindow?.show();
+    hudWindow?.showInactive();
 
     hudWindow?.webContents.send('hud-update', {
       status: 'enhancing',
@@ -214,11 +214,10 @@ async function triggerEnhancementFlow() {
           progress: 0,
           preview: error,
         });
-        clipboard.writeText(originalClipboardText);
         setTimeout(() => {
           hudWindow?.hide();
           isProcessing = false;
-        }, 3000);
+        }, 2500);
       },
       onDone: async (finalText) => {
         clearInterval(progressTimer);
@@ -229,17 +228,14 @@ async function triggerEnhancementFlow() {
           preview: finalText,
         });
 
+        // Write enhanced prompt to clipboard & simulate paste
         clipboard.writeText(finalText);
         await simulatePaste();
 
         setTimeout(() => {
-          clipboard.writeText(originalClipboardText);
-        }, 300);
-
-        setTimeout(() => {
           hudWindow?.hide();
           isProcessing = false;
-        }, 1000);
+        }, 800);
       },
     });
 
@@ -253,7 +249,7 @@ async function triggerEnhancementFlow() {
     setTimeout(() => {
       hudWindow?.hide();
       isProcessing = false;
-    }, 3000);
+    }, 2500);
   }
 }
 
