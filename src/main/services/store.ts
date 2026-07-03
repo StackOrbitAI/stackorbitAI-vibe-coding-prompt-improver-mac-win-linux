@@ -1,7 +1,7 @@
 import Store from 'electron-store';
-import { AppSettings, DEFAULT_PROMPT_PRESETS } from '../types/settings';
+import { AppSettings, DEFAULT_PROMPT_PRESETS } from '../../types/settings';
 
-export * from '../types/settings';
+export * from '../../types/settings';
 
 const defaults: AppSettings = {
   openaiKey: '',
