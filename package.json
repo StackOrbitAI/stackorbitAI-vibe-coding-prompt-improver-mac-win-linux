@@ -1,6 +1,6 @@
 {
   "name": "stackorbitai-vibe-coding-prompt-improver",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Vibe Coding Prompt Improver desktop utility",
   "main": "dist/main/index.js",
   "author": "StackOrbitAI <support@stackorbitai.com>",
@@ -52,6 +52,7 @@
     "mac": {
       "icon": "build/icon.icns",
       "category": "public.app-category.productivity",
+      "artifactName": "Vibe-Prompt-Improver-Mac-v${version}-${arch}.${ext}",
       "target": [
         {
           "target": "dmg",
@@ -64,6 +65,7 @@
     },
     "win": {
       "icon": "build/icon.ico",
+      "artifactName": "Vibe-Prompt-Improver-Windows-v${version}-${arch}.${ext}",
       "target": [
         {
           "target": "nsis",
@@ -76,6 +78,7 @@
     },
     "linux": {
       "icon": "build/icon.png",
+      "artifactName": "Vibe-Prompt-Improver-Linux-v${version}-${arch}.${ext}",
       "target": [
         {
           "target": "AppImage",
@@ -108,7 +111,7 @@
       "shortcutName": "Vibe Coding Prompt Improver",
       "installerIcon": "build/icon.ico",
       "uninstallerIcon": "build/icon.ico",
-      "artifactName": "${productName}-Setup-${version}-${arch}.${ext}"
+      "artifactName": "Vibe-Prompt-Improver-Windows-v${version}-${arch}.${ext}"
     },
     "publish": {
       "provider": "github",
