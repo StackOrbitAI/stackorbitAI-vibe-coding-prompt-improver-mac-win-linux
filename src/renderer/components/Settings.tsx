@@ -423,7 +423,7 @@ export default function Settings() {
             </div>
           ) : activeTab === 'modes' ? (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-3">
                 <div>
                   <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Prompt Library & Active Mode Selector</h2>
                   <p className="text-[11px] text-slate-400 mt-0.5">Select or create the default library instruction used when pressing the global hotkey:</p>
@@ -431,7 +431,7 @@ export default function Settings() {
 
                 <button
                   onClick={() => setShowAddForm(!showAddForm)}
-                  className="flex items-center space-x-1 px-2.5 py-1.5 bg-brand-600 hover:bg-brand-500 text-white font-medium rounded-lg text-xs transition-all shadow-sm"
+                  className="shrink-0 flex items-center space-x-1.5 px-3 py-1.5 bg-brand-600 hover:bg-brand-500 text-white font-medium rounded-lg text-xs transition-all shadow-sm"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Add Custom Preset</span>
@@ -499,7 +499,7 @@ export default function Settings() {
                 </div>
               )}
 
-              <div className="space-y-2.5 max-h-[350px] overflow-y-auto pr-1">
+              <div className="space-y-2.5 max-h-[460px] overflow-y-auto pr-1">
                 {activePresetsList.map((preset) => {
                   const isActive = (settings.activePromptMode || 'vibe-coding') === preset.id;
                   const isCustom = preset.id.startsWith('custom-');
