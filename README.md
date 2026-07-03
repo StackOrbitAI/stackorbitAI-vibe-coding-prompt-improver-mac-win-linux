@@ -50,20 +50,55 @@
 
 ---
 
-## ⚡ How It Works
+## ⌨️ Usage Instructions & Shortcuts
 
-1. **Type Anywhere**: Write your raw coding prompt in any app (VS Code, Cursor, ChatGPT, Claude.ai, Notepad, terminal — anywhere).
-2. **Select Your Text**: Highlight the prompt text you want to improve.
-3. **Press Global Shortcut**: Press `Ctrl+Shift+X` (or your custom combo).
-4. **AI Enhancement**: Floating HUD overlay pops up, captures your selected text, and rewrites it into a structured, technically precise coding prompt using AI.
-5. **Auto-Paste**: The improved prompt is instantly pasted back into your active input — ready to use!
+### 1. Default Activation Shortcuts
+
+The software runs quietly in the system tray. Select any prompt text in your code editor or browser and press the global hotkey:
+
+- **Windows & Linux**: `Ctrl+Shift+P` *(or `Ctrl+Shift+X`)*
+- **macOS**: `Command+Shift+P` *(or `Cmd+Shift+X`)*
 
 ---
 
-## ✨ Changelog
+### 2. How to Change Shortcut Keys
 
-### 🌟 v1.0.9 — NSIS Auto-Kill Running Process Feature
-- **Automatic Background App Termination**: NSIS installer automatically terminates any currently running instances of the application before updating, eliminating "cannot be closed" installation warnings.
+You can easily rebind the global activation shortcut to any preferred key combination:
+
+1. Launch the app or open **Settings** by double-clicking the System Tray icon.
+2. Select the **Shortcut** tab from the left sidebar navigation menu.
+3. Click inside the **Shortcut Recorder** box (it will prompt: *"Press key combination..."*).
+4. Press your desired key combination on your keyboard (e.g. `Ctrl+Alt+S` or `Cmd+Shift+K`).
+5. Click **Done** and press **Save Settings** in the bottom-right corner to activate the shortcut immediately system-wide.
+
+---
+
+## 🔄 Software Updates & Notification Behavior
+
+The application features built-in automatic update checking against GitHub Releases:
+
+- **Automated Check**: Scans for new version releases every 24 hours in the background.
+- **Manual Check**: Click **Check for Updates Now** inside the **Updates** tab at any time.
+
+### Update Status Indicators
+
+- **If the latest version is installed**:
+  ```text
+  "You are using the latest version."
+  ```
+- **If an older version is installed**:
+  ```text
+  "New update available for the latest version."
+  ```
+  *(Includes a prominent **Download Release Binary** button linking directly to the newest GitHub Release assets).*
+
+---
+
+## ✨ Features & Changelog
+
+### 🌟 v1.0.9 — NSIS Auto-Kill & Update Messaging
+- **Automatic Background App Termination**: NSIS installer automatically closes running app instances before updating.
+- **Enhanced Update Notifications**: Clear status feedback when checking software versions.
 
 ---
 
