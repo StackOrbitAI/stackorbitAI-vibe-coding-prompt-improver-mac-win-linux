@@ -765,158 +765,62 @@ export default function Settings() {
                     )}
                   </div>
 
-                  {isRealNewerUpdate ? (
-                    <div className="p-3.5 rounded-xl border border-amber-500/20 bg-amber-500/[0.02] flex flex-col space-y-3">
+                  {/* Latest Version Card */}
+                  <div className="p-4 rounded-xl border border-brand-500/30 bg-brand-500/[0.03] space-y-3">
+                    <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                        <span className="text-xs font-bold text-amber-500">
-                          New Update Available: {settings.latestVersionAvailable}
+                        <div className="w-2.5 h-2.5 rounded-full bg-brand-500 animate-pulse" />
+                        <span className="text-xs font-bold text-brand-400">
+                          Latest Release: {settings.latestVersionAvailable || `v${appVersion}`}
                         </span>
                       </div>
-                      <p className="text-[11px] text-slate-400 leading-relaxed">
-                        An update is available on GitHub with performance improvements and bug fixes.
-                      </p>
+
+                      {settings.allReleases && settings.allReleases[0]?.publishedAt && (
+                        <span className="text-[10px] text-slate-400 bg-slate-900 px-2 py-0.5 rounded font-mono border border-slate-800">
+                          Released: {new Date(settings.allReleases[0].publishedAt).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      {isRealNewerUpdate 
+                        ? `A new release (${settings.latestVersionAvailable}) is available on GitHub with performance improvements and bug fixes.`
+                        : `You are running the latest version (v${appVersion}).`}
+                    </p>
+
+                    <div className="flex items-center space-x-2 pt-1">
+                      {isRealNewerUpdate && (
+                        <button
+                          onClick={() => handleDownloadAndInstallUpdate(settings.updateUrl)}
+                          className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-2 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-lg text-xs shadow-md transition-all"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          <span>Download & Relaunch Update</span>
+                        </button>
+                      )}
+
                       <button
-                        onClick={() => handleDownloadAndInstallUpdate(settings.updateUrl)}
-                        className="flex items-center justify-center space-x-1.5 px-3 py-2 bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold rounded-lg text-xs shadow-md transition-all"
+                        onClick={() => window.api.openExternalUrl('https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/latest')}
+                        className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-medium rounded-lg text-xs transition-all"
                       >
-                        <Download className="w-3.5 h-3.5" />
-                        <span>Download & Relaunch Update</span>
+                        <ExternalLink className="w-3.5 h-3.5 text-brand-400" />
+                        <span>Open Latest Release Page</span>
                       </button>
                     </div>
-                  ) : (
-                    <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-400 flex items-center space-x-2">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                      <span>You are using the latest version (v{appVersion}).</span>
-                    </div>
-                  )}
+                  </div>
                 </div>
               </div>
 
-              {/* Release Notes Display */}
+              {/* Latest Release Notes Display */}
               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
                   <FileText className="w-4 h-4 text-brand-500" />
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Latest Release Notes</h3>
                 </div>
-                <div className="p-4 rounded-xl border border-slate-900 bg-slate-900/30 text-xs text-slate-300 leading-relaxed font-mono whitespace-pre-wrap max-h-40 overflow-y-auto">
-                  {settings.latestReleaseNotes || `• v${appVersion}: Embedded User Guide, custom prompt library, and auto-updater.`}
+                <div className="p-4 rounded-xl border border-slate-900 bg-slate-900/30 text-xs text-slate-300 leading-relaxed font-mono whitespace-pre-wrap max-h-48 overflow-y-auto">
+                  {settings.latestReleaseNotes || `• v${appVersion}: Clean Latest Release view, embedded User Guide, custom prompt library, and auto-updater.`}
                 </div>
               </div>
-
-              {/* Application Screenshots & Feature Showcase */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <ImageIcon className="w-4 h-4 text-brand-500" />
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Feature Screenshots Showcase</h3>
-                  </div>
-                  <div className="flex space-x-1 text-[10px]">
-                    {(['hud', 'settings', 'shortcuts'] as const).map((tab) => (
-                      <button
-                        key={tab}
-                        onClick={() => setActiveFeatureTab(tab)}
-                        className={`px-2 py-0.5 rounded transition-all capitalize ${
-                          activeFeatureTab === tab
-                            ? 'bg-brand-600 text-white font-semibold'
-                            : 'bg-slate-800 text-slate-400 hover:text-slate-200'
-                        }`}
-                      >
-                        {tab}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-xl border border-slate-900 bg-dark-900/40 flex flex-col items-center justify-center min-h-[140px] text-center space-y-2">
-                  {activeFeatureTab === 'hud' ? (
-                    <div className="space-y-1.5">
-                      <div className="px-4 py-3 rounded-xl border border-brand-500/30 bg-slate-900/80 shadow-lg text-left max-w-sm">
-                        <div className="flex items-center justify-between text-[11px] mb-1">
-                          <span className="font-bold text-brand-400 flex items-center space-x-1">
-                            <Sparkles className="w-3 h-3 mr-1" /> Vibe Prompt Improver HUD
-                          </span>
-                          <span className="text-[9px] bg-slate-800 text-slate-400 px-1 rounded font-mono">Cursor Overlay</span>
-                        </div>
-                        <p className="text-[10px] text-slate-300 font-mono">
-                          Goal: Implement user guide documentation...
-                        </p>
-                      </div>
-                      <span className="text-[10px] text-slate-500">Floating HUD overlay pops up near cursor in any IDE or browser</span>
-                    </div>
-                  ) : activeFeatureTab === 'settings' ? (
-                    <div className="space-y-1.5">
-                      <div className="px-4 py-2.5 rounded-lg border border-slate-800 bg-slate-900 text-left max-w-sm text-xs">
-                        <div className="font-semibold text-slate-200">LLM Provider & Model Selector</div>
-                        <span className="text-[10px] text-slate-400">OpenAI GPT-4o, Anthropic Claude, Google Gemini, OpenRouter</span>
-                      </div>
-                      <span className="text-[10px] text-slate-500">Configure API keys and model parameters locally</span>
-                    </div>
-                  ) : (
-                    <div className="space-y-1.5">
-                      <div className="px-4 py-2.5 rounded-lg border border-slate-800 bg-slate-900 text-center max-w-sm text-xs font-mono text-brand-400">
-                        Ctrl + Shift + P
-                      </div>
-                      <span className="text-[10px] text-slate-500">Customizable global shortcut recorder for system-wide activation</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Downloadable Links & Shortcuts for Previous Releases */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    GitHub Releases & Download Links
-                  </h3>
-                  <button
-                    onClick={() => window.api.openExternalUrl('https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/latest')}
-                    className="text-brand-500 hover:text-brand-400 font-semibold underline text-[11px] flex items-center space-x-0.5"
-                  >
-                    <span>Open Latest Release Page</span>
-                    <ExternalLink className="w-3 h-3 ml-0.5" />
-                  </button>
-                </div>
-
-                <div className="space-y-2 max-h-52 overflow-y-auto">
-                  {settings.allReleases && settings.allReleases.length > 0 ? (
-                    settings.allReleases.map((rel) => (
-                      <div 
-                        key={rel.id} 
-                        className="p-3 rounded-lg bg-dark-900/30 border border-slate-900 flex flex-col space-y-2"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xs font-bold text-slate-200 font-mono">{rel.tagName}</span>
-                            <span className="text-[10px] text-slate-400">{rel.name}</span>
-                          </div>
-                          <span className="text-[10px] text-slate-500">
-                            {rel.publishedAt ? new Date(rel.publishedAt).toLocaleDateString() : ''}
-                          </span>
-                        </div>
-
-                        <div className="flex flex-wrap gap-1.5">
-                          {rel.assets.map((asset) => (
-                            <button
-                              key={asset.name}
-                              onClick={() => handleDownloadAndInstallUpdate(asset.downloadUrl)}
-                              className="text-[10px] px-2 py-1 bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 rounded flex items-center space-x-1 transition-colors"
-                            >
-                              <Download className="w-2.5 h-2.5 text-brand-400" />
-                              <span className="truncate max-w-[140px]">{asset.name}</span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="p-3 rounded-lg bg-dark-900/20 border border-slate-900 text-xs text-slate-400 text-center">
-                      Click "Check for Updates Now" above to load all release download links.
-                    </div>
-                  )}
-                </div>
-              </div>
-
             </div>
           )}
         </div>
