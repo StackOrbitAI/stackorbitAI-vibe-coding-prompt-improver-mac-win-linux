@@ -1,6 +1,6 @@
 {
   "name": "stackorbitai-vibe-coding-prompt-improver",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Vibe Coding Prompt Improver desktop utility",
   "main": "dist/main/index.js",
   "author": "StackOrbitAI <support@stackorbitai.com>",
@@ -106,7 +106,7 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
+      "createDesktopShortcut": false,
       "createStartMenuShortcut": true,
       "shortcutName": "Vibe Coding Prompt Improver",
       "installerIcon": "build/icon.ico",
