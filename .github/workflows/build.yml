@@ -1,4 +1,4 @@
-﻿name: Build & Release — All Platforms
+name: Build & Release — All Platforms
 
 on:
   push:
@@ -35,7 +35,7 @@ jobs:
         shell: cmd
         run: |
           if not exist bin mkdir bin
-          C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /out:bin\sendkeys.exe src\main\services\sendkeys.cs
+          C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /target:winexe /out:bin\sendkeys.exe src\main\services\sendkeys.cs
 
       - name: Build renderer and main process
         run: npm run build
