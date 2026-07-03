@@ -42,9 +42,11 @@ function createSettingsWindow() {
   const icon = getAppIcon();
 
   settingsWindow = new BrowserWindow({
-    width: 650,
-    height: 520,
-    resizable: false,
+    width: 880,
+    height: 640,
+    minWidth: 780,
+    minHeight: 580,
+    resizable: true,
     frame: true,
     show: false,
     icon: icon.isEmpty() ? undefined : icon,
