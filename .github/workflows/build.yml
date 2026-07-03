@@ -31,11 +31,6 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Compile C# keyboard simulator (sendkeys.exe)
-        shell: cmd
-        run: |
-          if not exist bin mkdir bin
-          C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /target:winexe /out:bin\sendkeys.exe src\main\services\sendkeys.cs
 
       - name: Build renderer and main process
         run: npm run build
