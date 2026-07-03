@@ -3,20 +3,25 @@ import { store, ReleaseItem } from './store';
 
 const GITHUB_REPO = 'StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux';
 
-function isNewerVersion(current: string, latest: string): boolean {
-  const cleanCurrent = current.replace(/^v/, '');
-  const cleanLatest = latest.replace(/^v/, '');
-  
-  const currParts = cleanCurrent.split('.').map(Number);
-  const lateParts = cleanLatest.split('.').map(Number);
-  
-  for (let i = 0; i < Math.max(currParts.length, lateParts.length); i++) {
-    const curr = currParts[i] || 0;
-    const late = lateParts[i] || 0;
-    if (late > curr) return true;
-    if (curr > late) return false;
+function parseVersion(v: string): number[] {
+  const clean = (v || '').replace(/^v/, '').trim();
+  return clean.split('.').map((num) => parseInt(num, 10) || 0);
+}
+
+export function compareVersions(v1: string, v2: string): number {
+  const p1 = parseVersion(v1);
+  const p2 = parseVersion(v2);
+  for (let i = 0; i < Math.max(p1.length, p2.length); i++) {
+    const n1 = p1[i] || 0;
+    const n2 = p2[i] || 0;
+    if (n1 > n2) return 1;
+    if (n1 < n2) return -1;
   }
-  return false;
+  return 0;
+}
+
+export function isNewerVersion(current: string, latest: string): boolean {
+  return compareVersions(latest, current) > 0;
 }
 
 export async function fetchReleasesHistory(): Promise<ReleaseItem[]> {
@@ -33,7 +38,7 @@ export async function fetchReleasesHistory(): Promise<ReleaseItem[]> {
     const data = await response.json();
     if (!Array.isArray(data)) return [];
 
-    return data
+    const items: ReleaseItem[] = data
       .filter((r: any) => !r.draft)
       .map((r: any) => ({
         id: r.id,
@@ -41,13 +46,18 @@ export async function fetchReleasesHistory(): Promise<ReleaseItem[]> {
         name: r.name || r.tag_name || '',
         publishedAt: r.published_at || '',
         body: r.body || '',
-        htmlUrl: r.html_url || `https://github.com/${GITHUB_REPO}/releases`,
+        htmlUrl: r.html_url || `https://github.com/${GITHUB_REPO}/releases/latest`,
         assets: (r.assets || []).map((a: any) => ({
           name: a.name || '',
           size: a.size || 0,
           downloadUrl: a.browser_download_url || '',
         }))
       }));
+
+    // Sort strictly descending by semver version (e.g. v1.0.19 -> v1.0.18 -> v1.0.17)
+    items.sort((a, b) => compareVersions(b.tagName, a.tagName));
+
+    return items;
   } catch (e) {
     console.error('Failed to fetch releases history:', e);
     return [];
@@ -71,7 +81,7 @@ export async function checkForUpdates(manual: boolean = false): Promise<{
     const latestVersion = latestRelease ? latestRelease.tagName : currentVersion;
     const releaseNotes = latestRelease ? latestRelease.body : '';
     const publishedAt = latestRelease ? latestRelease.publishedAt : '';
-    const htmlUrl = latestRelease ? latestRelease.htmlUrl : `https://github.com/${GITHUB_REPO}/releases`;
+    const htmlUrl = `https://github.com/${GITHUB_REPO}/releases/latest`;
 
     const updateAvailable = isNewerVersion(currentVersion, latestVersion);
 
