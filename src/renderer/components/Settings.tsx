@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Key, Keyboard, Check, Loader2, Save, X, RefreshCw, AlertCircle, ArrowUpRight, Download, Sparkles, FileText, Image as ImageIcon, ExternalLink, SlidersHorizontal } from 'lucide-react';
+import { Key, Keyboard, Check, Loader2, Save, X, RefreshCw, AlertCircle, ArrowUpRight, Download, Sparkles, FileText, Image as ImageIcon, ExternalLink, Plus, Trash2, Edit3 } from 'lucide-react';
 import { AppSettings, ReleaseItem, DEFAULT_PROMPT_PRESETS, PromptPreset } from '../../main/services/store';
 
 declare global {
@@ -52,6 +52,12 @@ export default function Settings() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [activeFeatureTab, setActiveFeatureTab] = useState<'hud' | 'settings' | 'shortcuts'>('hud');
 
+  // Custom Preset Form State
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newPresetName, setNewPresetName] = useState('');
+  const [newPresetDesc, setNewPresetDesc] = useState('');
+  const [newPresetInstruction, setNewPresetInstruction] = useState('');
+
   // Load settings on mount
   useEffect(() => {
     window.api.getSettings().then((storeSettings) => {
@@ -74,7 +80,7 @@ export default function Settings() {
       setModels((prev) => ({ ...prev, [provider]: fetchedModels }));
     } catch (e) {
       console.error(`Failed to fetch models for ${provider}`, e);
-    } fontally {
+    } finally {
       setLoadingModels((prev) => ({ ...prev, [provider]: false }));
     }
   };
@@ -106,6 +112,56 @@ export default function Settings() {
   const handlePromptModeChange = (modeId: string) => {
     if (!settings) return;
     setSettings({ ...settings, activePromptMode: modeId });
+  };
+
+  const handleAddCustomPreset = (setActive: boolean = true) => {
+    if (!settings || !newPresetName.trim() || !newPresetInstruction.trim()) return;
+
+    const newPresetId = `custom-${Date.now()}`;
+    const newPreset: PromptPreset = {
+      id: newPresetId,
+      name: newPresetName.trim(),
+      description: newPresetDesc.trim() || 'Custom user prompt instruction preset.',
+      instruction: newPresetInstruction.trim(),
+    };
+
+    const currentPresets = settings.customPresets && settings.customPresets.length > 0 
+      ? settings.customPresets 
+      : DEFAULT_PROMPT_PRESETS;
+
+    const updatedPresets = [...currentPresets, newPreset];
+    const updatedSettings: AppSettings = {
+      ...settings,
+      customPresets: updatedPresets,
+      activePromptMode: setActive ? newPresetId : settings.activePromptMode,
+    };
+
+    setSettings(updatedSettings);
+    setShowAddForm(false);
+    setNewPresetName('');
+    setNewPresetDesc('');
+    setNewPresetInstruction('');
+  };
+
+  const handleDeleteCustomPreset = (e: React.MouseEvent, presetId: string) => {
+    e.stopPropagation();
+    if (!settings) return;
+
+    const currentPresets = settings.customPresets && settings.customPresets.length > 0 
+      ? settings.customPresets 
+      : DEFAULT_PROMPT_PRESETS;
+
+    const filtered = currentPresets.filter((p) => p.id !== presetId);
+    let nextActive = settings.activePromptMode;
+    if (nextActive === presetId) {
+      nextActive = filtered.length > 0 ? filtered[0].id : 'vibe-coding';
+    }
+
+    setSettings({
+      ...settings,
+      customPresets: filtered,
+      activePromptMode: nextActive,
+    });
   };
 
   const handleShortcutCapture = (e: React.KeyboardEvent) => {
@@ -369,14 +425,84 @@ export default function Settings() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Prompt Library & Preset Modes</h2>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Select the default mode used when activating the global hotkey:</p>
+                  <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Prompt Library & Active Mode Selector</h2>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Select or create the default library instruction used when pressing the global hotkey:</p>
                 </div>
+
+                <button
+                  onClick={() => setShowAddForm(!showAddForm)}
+                  className="flex items-center space-x-1 px-2.5 py-1.5 bg-brand-600 hover:bg-brand-500 text-white font-medium rounded-lg text-xs transition-all shadow-sm"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Custom Preset</span>
+                </button>
               </div>
+
+              {/* Add Custom Preset Form Modal / Card */}
+              {showAddForm && (
+                <div className="p-4 rounded-xl border border-brand-500/40 bg-dark-900/60 space-y-3 animate-fadeIn">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-200 flex items-center space-x-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-brand-400" />
+                      <span>Create New Custom Prompt Preset</span>
+                    </span>
+                    <button
+                      onClick={() => setShowAddForm(false)}
+                      className="text-slate-400 hover:text-slate-200"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      placeholder="Preset Title (e.g. Correct Prompt in English Without Meaning Change)"
+                      value={newPresetName}
+                      onChange={(e) => setNewPresetName(e.target.value)}
+                      className="w-full text-xs p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-200 focus:outline-none focus:border-brand-500"
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="Short Description (e.g. Translates and corrects grammar while preserving 100% intent)"
+                      value={newPresetDesc}
+                      onChange={(e) => setNewPresetDesc(e.target.value)}
+                      className="w-full text-xs p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-200 focus:outline-none focus:border-brand-500"
+                    />
+
+                    <textarea
+                      rows={3}
+                      placeholder="AI System Instruction (e.g. I want to correct my prompt in English without meaning change. Convert any text into professional English. Output ONLY the corrected text.)"
+                      value={newPresetInstruction}
+                      onChange={(e) => setNewPresetInstruction(e.target.value)}
+                      className="w-full text-xs p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-200 focus:outline-none focus:border-brand-500 font-mono resize-none"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-end space-x-2 pt-1">
+                    <button
+                      onClick={() => setShowAddForm(false)}
+                      className="px-3 py-1.5 bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs rounded-lg transition-colors"
+                    >
+                      Cancel
+                    </button>
+
+                    <button
+                      onClick={() => handleAddCustomPreset(true)}
+                      disabled={!newPresetName.trim() || !newPresetInstruction.trim()}
+                      className="px-3.5 py-1.5 bg-brand-600 hover:bg-brand-500 disabled:bg-slate-800 text-white font-medium text-xs rounded-lg transition-colors shadow-sm"
+                    >
+                      Save & Set Active Default
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-2.5 max-h-[350px] overflow-y-auto pr-1">
                 {activePresetsList.map((preset) => {
                   const isActive = (settings.activePromptMode || 'vibe-coding') === preset.id;
+                  const isCustom = preset.id.startsWith('custom-');
 
                   return (
                     <div
@@ -402,11 +528,29 @@ export default function Settings() {
                           </span>
                         </div>
 
-                        {isActive && (
-                          <span className="text-[9px] bg-brand-500/20 text-brand-400 border border-brand-500/30 px-2 py-0.5 rounded-full font-semibold">
-                            Active Default
-                          </span>
-                        )}
+                        <div className="flex items-center space-x-2">
+                          {isCustom && (
+                            <span className="text-[9px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-semibold">
+                              Custom Preset
+                            </span>
+                          )}
+
+                          {isActive && (
+                            <span className="text-[9px] bg-brand-500/20 text-brand-400 border border-brand-500/30 px-2 py-0.5 rounded-full font-semibold">
+                              Active Default
+                            </span>
+                          )}
+
+                          {isCustom && (
+                            <button
+                              onClick={(e) => handleDeleteCustomPreset(e, preset.id)}
+                              className="text-slate-500 hover:text-rose-400 p-1 rounded transition-colors"
+                              title="Delete custom preset"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
                       </div>
 
                       <p className="text-[11px] text-slate-400 mt-2 ml-6 leading-relaxed">
@@ -534,7 +678,7 @@ export default function Settings() {
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Latest Release Notes</h3>
                 </div>
                 <div className="p-4 rounded-xl border border-slate-900 bg-slate-900/30 text-xs text-slate-300 leading-relaxed font-mono whitespace-pre-wrap max-h-40 overflow-y-auto">
-                  {settings.latestReleaseNotes || `• v${appVersion}: Prompt Preset Library, performance updates, and native auto-updater integration.`}
+                  {settings.latestReleaseNotes || `• v${appVersion}: Custom Prompt Preset Creation, Library Management, and Auto-Updater.`}
                 </div>
               </div>
 
@@ -573,7 +717,7 @@ export default function Settings() {
                           <span className="text-[9px] bg-slate-800 text-slate-400 px-1 rounded font-mono">Cursor Overlay</span>
                         </div>
                         <p className="text-[10px] text-slate-300 font-mono">
-                          Goal: Implement background taskbar cleanup and auto-update service...
+                          Goal: Implement custom prompt library presets...
                         </p>
                       </div>
                       <span className="text-[10px] text-slate-500">Floating HUD overlay pops up near cursor in any IDE or browser</span>
