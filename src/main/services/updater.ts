@@ -1,5 +1,5 @@
-import { app } from 'electron';
-import { store } from './store';
+import { app, globalShortcut, Tray, BrowserWindow } from 'electron';
+import { store, ReleaseItem } from './store';
 
 const GITHUB_REPO = 'StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux';
 
@@ -19,28 +19,59 @@ function isNewerVersion(current: string, latest: string): boolean {
   return false;
 }
 
+export async function fetchReleasesHistory(): Promise<ReleaseItem[]> {
+  try {
+    const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases`, {
+      headers: {
+        'User-Agent': 'StackOrbitAI-Updater',
+        'Accept': 'application/vnd.github+json'
+      }
+    });
+
+    if (!response.ok) return [];
+
+    const data = await response.json();
+    if (!Array.isArray(data)) return [];
+
+    return data
+      .filter((r: any) => !r.draft)
+      .map((r: any) => ({
+        id: r.id,
+        tagName: r.tag_name || '',
+        name: r.name || r.tag_name || '',
+        publishedAt: r.published_at || '',
+        body: r.body || '',
+        htmlUrl: r.html_url || `https://github.com/${GITHUB_REPO}/releases`,
+        assets: (r.assets || []).map((a: any) => ({
+          name: a.name || '',
+          size: a.size || 0,
+          downloadUrl: a.browser_download_url || '',
+        }))
+      }));
+  } catch (e) {
+    console.error('Failed to fetch releases history:', e);
+    return [];
+  }
+}
+
 export async function checkForUpdates(manual: boolean = false): Promise<{
   success: boolean;
   updateAvailable: boolean;
   latestVersion: string;
+  releaseNotes: string;
+  publishedAt: string;
+  allReleases: ReleaseItem[];
   error?: string;
 }> {
   try {
     const currentVersion = app.getVersion();
+    const allReleases = await fetchReleasesHistory();
     
-    const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases/latest`, {
-      headers: {
-        'User-Agent': 'StackOrbitAI-Updater'
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`GitHub API returned status ${response.status}`);
-    }
-
-    const releaseData = await response.json();
-    const latestVersion = releaseData.tag_name || '';
-    const htmlUrl = releaseData.html_url || `https://github.com/${GITHUB_REPO}/releases`;
+    const latestRelease = allReleases[0];
+    const latestVersion = latestRelease ? latestRelease.tagName : currentVersion;
+    const releaseNotes = latestRelease ? latestRelease.body : '';
+    const publishedAt = latestRelease ? latestRelease.publishedAt : '';
+    const htmlUrl = latestRelease ? latestRelease.htmlUrl : `https://github.com/${GITHUB_REPO}/releases`;
 
     const updateAvailable = isNewerVersion(currentVersion, latestVersion);
 
@@ -49,13 +80,18 @@ export async function checkForUpdates(manual: boolean = false): Promise<{
       lastUpdateCheck: Date.now(),
       latestVersionAvailable: latestVersion,
       isUpdateAvailable: updateAvailable,
-      updateUrl: htmlUrl
+      updateUrl: htmlUrl,
+      latestReleaseNotes: releaseNotes,
+      allReleases: allReleases
     });
 
     return {
       success: true,
       updateAvailable,
-      latestVersion
+      latestVersion,
+      releaseNotes,
+      publishedAt,
+      allReleases
     };
   } catch (error: any) {
     console.error('Failed to check for updates:', error);
@@ -63,8 +99,35 @@ export async function checkForUpdates(manual: boolean = false): Promise<{
       success: false,
       updateAvailable: false,
       latestVersion: '',
+      releaseNotes: '',
+      publishedAt: '',
+      allReleases: [],
       error: error.message || 'Unknown error'
     };
+  }
+}
+
+/**
+ * Taskbar & Tray Cleanup when updating — ensures seamless transition
+ */
+export function prepareAppExitForUpdate(tray: Tray | null, windows: (BrowserWindow | null)[]) {
+  try {
+    // 1. Unregister all hotkeys
+    globalShortcut.unregisterAll();
+
+    // 2. Destroy tray icon to remove app from notification area
+    if (tray) {
+      tray.destroy();
+    }
+
+    // 3. Destroy all windows to remove app from Windows Taskbar immediately
+    for (const win of windows) {
+      if (win && !win.isDestroyed()) {
+        win.destroy();
+      }
+    }
+  } catch (e) {
+    console.error('Error during update cleanup:', e);
   }
 }
 
