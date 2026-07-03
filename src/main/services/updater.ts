@@ -1,7 +1,7 @@
 import { app } from 'electron';
 import { store } from './store';
 
-const GITHUB_REPO = 'StackOrbitAI/stackorbitai-vibe-coding-prompt-improver';
+const GITHUB_REPO = 'StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux';
 
 function isNewerVersion(current: string, latest: string): boolean {
   const cleanCurrent = current.replace(/^v/, '');
