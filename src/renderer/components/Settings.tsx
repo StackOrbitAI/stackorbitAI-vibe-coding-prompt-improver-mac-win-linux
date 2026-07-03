@@ -25,6 +25,23 @@ declare global {
   }
 }
 
+function parseSemver(v: string): number[] {
+  const clean = (v || '').replace(/^v/, '').trim();
+  return clean.split('.').map((num) => parseInt(num, 10) || 0);
+}
+
+function isNewerSemver(current: string, latest: string): boolean {
+  const p1 = parseSemver(current);
+  const p2 = parseSemver(latest);
+  for (let i = 0; i < Math.max(p1.length, p2.length); i++) {
+    const n1 = p1[i] || 0;
+    const n2 = p2[i] || 0;
+    if (n2 > n1) return true;
+    if (n1 > n2) return false;
+  }
+  return false;
+}
+
 export default function Settings() {
   const [activeTab, setActiveTab] = useState<'api' | 'modes' | 'shortcut' | 'updates'>('api');
   const [appVersion, setAppVersion] = useState('1.0.0');
@@ -224,10 +241,10 @@ export default function Settings() {
     try {
       const result = await window.api.checkForUpdates();
       if (result.success) {
-        if (result.updateAvailable) {
+        if (result.updateAvailable && isNewerSemver(appVersion, result.latestVersion)) {
           setUpdateStatus(`New update available for the latest version (${result.latestVersion}).`);
         } else {
-          setUpdateStatus('You are using the latest version.');
+          setUpdateStatus(`You are using the latest version (v${appVersion}).`);
         }
       } else {
         setUpdateStatus(`Error checking updates: ${result.error || 'Unknown error'}`);
@@ -243,11 +260,12 @@ export default function Settings() {
     }
   };
 
-  const handleDownloadAndInstallUpdate = (downloadUrl: string) => {
+  const handleDownloadAndInstallUpdate = (downloadUrl?: string) => {
     if (window.api.prepareUpdateExit) {
       window.api.prepareUpdateExit();
     }
-    window.api.openExternalUrl(downloadUrl);
+    const targetUrl = downloadUrl || (settings?.updateUrl) || 'https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/latest';
+    window.api.openExternalUrl(targetUrl);
   };
 
   if (!settings) {
@@ -262,6 +280,8 @@ export default function Settings() {
   const activePresetsList = settings.customPresets && settings.customPresets.length > 0 
     ? settings.customPresets 
     : DEFAULT_PROMPT_PRESETS;
+
+  const isRealNewerUpdate = settings.isUpdateAvailable && isNewerSemver(appVersion, settings.latestVersionAvailable);
 
   return (
     <div className="w-full h-full flex flex-col justify-between bg-dark-950 text-slate-100 font-sans border border-slate-800/80 rounded-lg overflow-hidden select-none">
@@ -287,10 +307,10 @@ export default function Settings() {
       {/* Primary Workspace */}
       <div className="flex flex-1 overflow-hidden">
         {/* Navigation Sidebar */}
-        <div className="w-44 border-r border-slate-900/60 bg-dark-900/20 p-3 flex flex-col space-y-1">
+        <div className="w-48 border-r border-slate-900/60 bg-dark-900/20 p-3 flex flex-col space-y-1">
           <button
             onClick={() => setActiveTab('api')}
-            className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-sm transition-all font-medium ${
+            className={`w-full flex items-center space-x-2 px-3 py-2.5 rounded-lg text-sm transition-all font-medium ${
               activeTab === 'api'
                 ? 'bg-brand-600/15 text-brand-500 border-l-2 border-brand-500 font-semibold'
                 : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
@@ -302,7 +322,7 @@ export default function Settings() {
 
           <button
             onClick={() => setActiveTab('modes')}
-            className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-sm transition-all font-medium ${
+            className={`w-full flex items-center space-x-2 px-3 py-2.5 rounded-lg text-sm transition-all font-medium ${
               activeTab === 'modes'
                 ? 'bg-brand-600/15 text-brand-500 border-l-2 border-brand-500 font-semibold'
                 : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
@@ -314,7 +334,7 @@ export default function Settings() {
 
           <button
             onClick={() => setActiveTab('shortcut')}
-            className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-sm transition-all font-medium ${
+            className={`w-full flex items-center space-x-2 px-3 py-2.5 rounded-lg text-sm transition-all font-medium ${
               activeTab === 'shortcut'
                 ? 'bg-brand-600/15 text-brand-500 border-l-2 border-brand-500 font-semibold'
                 : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
@@ -325,7 +345,7 @@ export default function Settings() {
           </button>
           <button
             onClick={() => setActiveTab('updates')}
-            className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-sm transition-all font-medium ${
+            className={`w-full flex items-center space-x-2 px-3 py-2.5 rounded-lg text-sm transition-all font-medium ${
               activeTab === 'updates'
                 ? 'bg-brand-600/15 text-brand-500 border-l-2 border-brand-500 font-semibold'
                 : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
@@ -334,7 +354,7 @@ export default function Settings() {
             <RefreshCw className={`w-4 h-4 ${checkingUpdates ? 'animate-spin' : ''}`} />
             <span className="flex items-center justify-between w-full">
               <span>Updates</span>
-              {settings.isUpdateAvailable && (
+              {isRealNewerUpdate && (
                 <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse mr-1" />
               )}
             </span>
@@ -361,7 +381,7 @@ export default function Settings() {
                 return (
                   <div 
                     key={provider} 
-                    className={`p-3 rounded-xl border transition-all ${
+                    className={`p-3.5 rounded-xl border transition-all ${
                       isSelected 
                         ? 'border-brand-500/40 bg-brand-500/[0.02]' 
                         : 'border-slate-900 bg-slate-900/20 hover:border-slate-800'
@@ -648,7 +668,7 @@ export default function Settings() {
                     )}
                   </div>
 
-                  {settings.isUpdateAvailable && (
+                  {isRealNewerUpdate ? (
                     <div className="p-3.5 rounded-xl border border-amber-500/20 bg-amber-500/[0.02] flex flex-col space-y-3">
                       <div className="flex items-center space-x-2">
                         <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
@@ -667,6 +687,11 @@ export default function Settings() {
                         <span>Download & Relaunch Update</span>
                       </button>
                     </div>
+                  ) : (
+                    <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-400 flex items-center space-x-2">
+                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <span>You are using the latest version (v{appVersion}).</span>
+                    </div>
                   )}
                 </div>
               </div>
@@ -678,7 +703,7 @@ export default function Settings() {
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Latest Release Notes</h3>
                 </div>
                 <div className="p-4 rounded-xl border border-slate-900 bg-slate-900/30 text-xs text-slate-300 leading-relaxed font-mono whitespace-pre-wrap max-h-40 overflow-y-auto">
-                  {settings.latestReleaseNotes || `• v${appVersion}: Custom Prompt Preset Creation, Library Management, and Auto-Updater.`}
+                  {settings.latestReleaseNotes || `• v${appVersion}: Strict semver version sorting and latest release download integration.`}
                 </div>
               </div>
 
@@ -745,13 +770,13 @@ export default function Settings() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Previous Releases & Direct Download Links
+                    GitHub Releases & Download Links
                   </h3>
                   <button
-                    onClick={() => window.api.openExternalUrl('https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases')}
+                    onClick={() => window.api.openExternalUrl('https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/latest')}
                     className="text-brand-500 hover:text-brand-400 font-semibold underline text-[11px] flex items-center space-x-0.5"
                   >
-                    <span>GitHub Releases</span>
+                    <span>Open Latest Release Page</span>
                     <ExternalLink className="w-3 h-3 ml-0.5" />
                   </button>
                 </div>
@@ -789,7 +814,7 @@ export default function Settings() {
                     ))
                   ) : (
                     <div className="p-3 rounded-lg bg-dark-900/20 border border-slate-900 text-xs text-slate-400 text-center">
-                      Click "Check for Updates Now" above to load all previous release download links.
+                      Click "Check for Updates Now" above to load all release download links.
                     </div>
                   )}
                 </div>
