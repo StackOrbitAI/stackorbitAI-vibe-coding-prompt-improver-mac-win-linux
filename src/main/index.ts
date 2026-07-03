@@ -1,9 +1,13 @@
-import { app, BrowserWindow, globalShortcut, ipcMain, clipboard, screen, Tray, Menu, nativeImage } from 'electron';
+import { app, BrowserWindow, globalShortcut, ipcMain, clipboard, screen, Tray, Menu, nativeImage, shell } from 'electron';
 import path from 'path';
 import fs from 'fs';
 import { store } from './services/store';
 import { simulateCopy, simulatePaste } from './services/keyboard';
 import { improvePrompt } from './services/ai';
+import { initAutoUpdater, checkForUpdates } from './services/updater';
+
+// Single instance lock
+const gotTheLock = app.requestSingleInstanceLock();
 
 let settingsWindow: BrowserWindow | null = null;
 let hudWindow: BrowserWindow | null = null;
@@ -13,6 +17,21 @@ let isProcessing = false;
 // Determine if we're in development mode
 const isDev = !app.isPackaged;
 
+function getAppIcon(): nativeImage {
+  const possiblePaths = [
+    path.join(__dirname, '../../build/icon.png'),
+    path.join(app.getAppPath(), 'build', 'icon.png'),
+    path.join(process.resourcesPath, 'build', 'icon.png'),
+    path.join(process.resourcesPath, 'icon.png'),
+  ];
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) {
+      return nativeImage.createFromPath(p);
+    }
+  }
+  return nativeImage.createEmpty();
+}
+
 function createSettingsWindow() {
   if (settingsWindow) {
     settingsWindow.show();
@@ -20,12 +39,15 @@ function createSettingsWindow() {
     return;
   }
 
+  const icon = getAppIcon();
+
   settingsWindow = new BrowserWindow({
     width: 650,
     height: 520,
     resizable: false,
     frame: true,
     show: false,
+    icon: icon.isEmpty() ? undefined : icon,
     title: 'StackOrbitAI Vibe Coding Settings',
     backgroundColor: '#0f172a', // Dark theme background
     webPreferences: {
@@ -38,8 +60,6 @@ function createSettingsWindow() {
   // Load local Vite dev server in dev, or local index.html in production
   if (isDev) {
     settingsWindow.loadURL('http://localhost:5173');
-    // Open DevTools in dev
-    // settingsWindow.webContents.openDevTools();
   } else {
     settingsWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
   }
@@ -161,7 +181,6 @@ async function triggerEnhancementFlow() {
     });
 
     let currentProgress = 5;
-    // Fast mock increment up to 80% to keep HUD active during connection establishment
     const progressTimer = setInterval(() => {
       if (currentProgress < 75) {
         currentProgress += 5;
@@ -179,7 +198,6 @@ async function triggerEnhancementFlow() {
     await improvePrompt(capturedText, {
       onChunk: (chunk) => {
         streamText += chunk;
-        // As stream progresses, push progress towards 95%
         if (currentProgress < 95) {
           currentProgress += 1;
         }
@@ -196,10 +214,7 @@ async function triggerEnhancementFlow() {
           progress: 0,
           preview: error,
         });
-        
-        // Restore original clipboard content
         clipboard.writeText(originalClipboardText);
-
         setTimeout(() => {
           hudWindow?.hide();
           isProcessing = false;
@@ -214,18 +229,13 @@ async function triggerEnhancementFlow() {
           preview: finalText,
         });
 
-        // 6. Write enhanced text to clipboard
         clipboard.writeText(finalText);
-
-        // 7. Simulate paste
         await simulatePaste();
 
-        // 8. Restore original clipboard content after paste completes
         setTimeout(() => {
           clipboard.writeText(originalClipboardText);
         }, 300);
 
-        // Hide HUD after 1 second
         setTimeout(() => {
           hudWindow?.hide();
           isProcessing = false;
@@ -249,19 +259,21 @@ async function triggerEnhancementFlow() {
 
 // System Tray management
 function createTray() {
-  const iconPath = path.join(app.getAppPath(), 'build', 'icon.png');
-  let iconImage;
+  const icon = getAppIcon();
+  const trayIcon = icon.isEmpty() ? nativeImage.createEmpty() : icon.resize({ width: 16, height: 16 });
 
-  if (fs.existsSync(iconPath)) {
-    iconImage = nativeImage.createFromPath(iconPath).resize({ width: 16, height: 16 });
-  } else {
-    iconImage = nativeImage.createEmpty();
+  try {
+    tray = new Tray(trayIcon);
+    tray.setToolTip('StackOrbitAI Vibe Coding Prompt Improver');
+    tray.on('double-click', () => {
+      if (!settingsWindow) createSettingsWindow();
+      settingsWindow?.show();
+      settingsWindow?.focus();
+    });
+    updateTrayMenu();
+  } catch (e) {
+    console.error('Failed to create tray icon:', e);
   }
-
-  tray = new Tray(iconImage);
-  tray.setToolTip('StackOrbitAI Vibe Coding Prompt Improver');
-
-  updateTrayMenu();
 }
 
 function updateTrayMenu() {
@@ -277,6 +289,7 @@ function updateTrayMenu() {
           createSettingsWindow();
         }
         settingsWindow?.show();
+        settingsWindow?.focus();
       },
     },
     {
@@ -293,7 +306,6 @@ function updateTrayMenu() {
       label: 'Quit',
       click: () => {
         globalShortcut.unregisterAll();
-        // Since we prevent default on settings window close, we need to bypass it here
         settingsWindow?.destroy();
         app.quit();
       },
@@ -303,29 +315,51 @@ function updateTrayMenu() {
   tray.setContextMenu(contextMenu);
 }
 
-// Application Lifecycle
-app.whenReady().then(() => {
-  createSettingsWindow();
-  createHUDWindow();
-  createTray();
-  registerGlobalShortcut();
-
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    if (settingsWindow) {
+      if (settingsWindow.isMinimized()) settingsWindow.restore();
+      settingsWindow.show();
+      settingsWindow.focus();
+    } else {
       createSettingsWindow();
+      settingsWindow?.show();
+      settingsWindow?.focus();
     }
   });
-});
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
+  // Application Lifecycle
+  app.whenReady().then(() => {
+    createSettingsWindow();
+    createHUDWindow();
+    createTray();
+    registerGlobalShortcut();
+    initAutoUpdater();
 
-app.on('will-quit', () => {
-  globalShortcut.unregisterAll();
-});
+    // Show Settings Window on app launch so user immediately sees the app!
+    settingsWindow?.show();
+    settingsWindow?.focus();
+
+    app.on('activate', () => {
+      if (!settingsWindow) {
+        createSettingsWindow();
+      }
+      settingsWindow?.show();
+      settingsWindow?.focus();
+    });
+  });
+
+  app.on('window-all-closed', (e: Event) => {
+    // Keep running in system tray
+    e.preventDefault();
+  });
+
+  app.on('will-quit', () => {
+    globalShortcut.unregisterAll();
+  });
+}
 
 // IPC Handlers
 ipcMain.handle('get-settings', () => {
@@ -343,9 +377,13 @@ ipcMain.on('close-settings', () => {
   settingsWindow?.hide();
 });
 
-// Dynamic models resolver
+ipcMain.on('open-external-url', (event, url) => {
+  if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+    shell.openExternal(url);
+  }
+});
+
 ipcMain.handle('get-models', async (event, provider) => {
-  // Static model lists as robust fallbacks
   const fallbackModels: Record<string, string[]> = {
     openai: ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'],
     claude: ['claude-3-5-haiku-20241022', 'claude-3-5-sonnet-20241022', 'claude-3-opus-20240229'],
@@ -391,4 +429,12 @@ ipcMain.handle('get-models', async (event, provider) => {
   }
 
   return fallbackModels[provider] || [];
+});
+
+ipcMain.handle('check-for-updates', async () => {
+  return await checkForUpdates(true);
+});
+
+ipcMain.handle('get-app-version', () => {
+  return app.getVersion();
 });
