@@ -4,7 +4,7 @@ import fs from 'fs';
 import { store } from './services/store';
 import { simulateCopy, simulatePaste } from './services/keyboard';
 import { improvePrompt } from './services/ai';
-import { initAutoUpdater, checkForUpdates } from './services/updater';
+import { initAutoUpdater, checkForUpdates, prepareAppExitForUpdate } from './services/updater';
 
 // Single instance lock
 const gotTheLock = app.requestSingleInstanceLock();
@@ -429,6 +429,13 @@ ipcMain.handle('get-models', async (event, provider) => {
 
 ipcMain.handle('check-for-updates', async () => {
   return await checkForUpdates(true);
+});
+
+ipcMain.on('prepare-update-exit', () => {
+  prepareAppExitForUpdate(tray, [settingsWindow, hudWindow]);
+  setTimeout(() => {
+    app.quit();
+  }, 300);
 });
 
 ipcMain.handle('get-app-version', () => {
