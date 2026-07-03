@@ -1,5 +1,19 @@
 import Store from 'electron-store';
 
+export interface ReleaseItem {
+  id: number;
+  tagName: string;
+  name: string;
+  publishedAt: string;
+  body: string;
+  htmlUrl: string;
+  assets: Array<{
+    name: string;
+    size: number;
+    downloadUrl: string;
+  }>;
+}
+
 export interface AppSettings {
   openaiKey: string;
   openrouterKey: string;
@@ -12,11 +26,13 @@ export interface AppSettings {
   activeProvider: 'openai' | 'openrouter' | 'claude' | 'gemini';
   shortcut: string;
   isPaused: boolean;
-  // Update fields
+  // Update & Release fields
   lastUpdateCheck: number;
   latestVersionAvailable: string;
   isUpdateAvailable: boolean;
   updateUrl: string;
+  latestReleaseNotes: string;
+  allReleases: ReleaseItem[];
 }
 
 const defaults: AppSettings = {
@@ -35,11 +51,12 @@ const defaults: AppSettings = {
   latestVersionAvailable: '',
   isUpdateAvailable: false,
   updateUrl: '',
+  latestReleaseNotes: '',
+  allReleases: [],
 };
 
 export const store = new Store<AppSettings>({
   name: 'settings',
   defaults,
-  // Encrypt the store configuration file locally to protect user API keys
   encryptionKey: 'stackorbitai-vibe-prompt-improver-enc-key'
 });
