@@ -464,7 +464,7 @@ export default function Settings() {
               <div className="p-3 rounded-lg bg-dark-900/20 border border-slate-900/60 flex items-center justify-between text-xs">
                 <span className="text-slate-400">Live Build Releases</span>
                 <button
-                  onClick={() => window.api.openExternalUrl('https://github.com/StackOrbitAI/stackorbitai-vibe-coding-prompt-improver/releases')}
+                  onClick={() => window.api.openExternalUrl('https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases')}
                   className="text-brand-500 hover:text-brand-400 font-semibold underline flex items-center space-x-0.5"
                 >
                   <span>Open GitHub Releases</span>
