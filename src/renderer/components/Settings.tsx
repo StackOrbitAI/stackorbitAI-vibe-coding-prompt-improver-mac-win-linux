@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Key, Keyboard, Check, Loader2, Save, X, RefreshCw, AlertCircle, ArrowUpRight, Download, Sparkles, FileText, Image as ImageIcon, ExternalLink, Plus, Trash2, Edit3 } from 'lucide-react';
-import { AppSettings, ReleaseItem, DEFAULT_PROMPT_PRESETS, PromptPreset } from '../../main/services/store';
+import { AppSettings, ReleaseItem, DEFAULT_PROMPT_PRESETS, PromptPreset } from '../../types/settings';
 
 declare global {
   interface Window {
