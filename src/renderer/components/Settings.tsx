@@ -175,9 +175,9 @@ export default function Settings() {
       const result = await window.api.checkForUpdates();
       if (result.success) {
         if (result.updateAvailable) {
-          setUpdateStatus(`Update Available! New Version: ${result.latestVersion}`);
+          setUpdateStatus(`New update available for the latest version (${result.latestVersion}).`);
         } else {
-          setUpdateStatus('Your software is up to date!');
+          setUpdateStatus('You are using the latest version.');
         }
       } else {
         setUpdateStatus(`Error checking updates: ${result.error || 'Unknown error'}`);
