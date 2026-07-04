@@ -336,9 +336,25 @@ if (!gotTheLock) {
     registerGlobalShortcut();
     initAutoUpdater();
 
-    // Show Settings Window on app launch so user immediately sees the app!
-    settingsWindow?.show();
-    settingsWindow?.focus();
+    // Enable auto-start on boot for packaged apps
+    if (app.isPackaged) {
+      try {
+        app.setLoginItemSettings({
+          openAtLogin: true,
+          path: app.getPath('exe'),
+          args: ['--hidden']
+        });
+      } catch (err) {
+        console.error('Failed to set login item settings:', err);
+      }
+    }
+
+    // Show Settings Window on app launch only if --hidden is not passed
+    const startHidden = process.argv.includes('--hidden');
+    if (!startHidden) {
+      settingsWindow?.show();
+      settingsWindow?.focus();
+    }
 
     app.on('activate', () => {
       if (!settingsWindow) {

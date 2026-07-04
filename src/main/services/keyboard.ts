@@ -15,7 +15,7 @@ export function simulateCopy(): Promise<void> {
         '-NonInteractive',
         '-WindowStyle', 'Hidden',
         '-Command',
-        `Add-Type -AssemblyName System.Windows.Forms; Start-Sleep -Milliseconds 80; [System.Windows.Forms.SendKeys]::SendWait('^c')`
+        `Add-Type -AssemblyName System.Windows.Forms; $waited = 0; while (([int][System.Windows.Forms.Control]::ModifierKeys -band 327680) -ne 0 -and $waited -lt 1000) { Start-Sleep -Milliseconds 20; $waited += 20 }; [System.Windows.Forms.SendKeys]::SendWait('^c')`
       ], {
         windowsHide: true,
         detached: false,
@@ -47,7 +47,7 @@ export function simulatePaste(): Promise<void> {
         '-NonInteractive',
         '-WindowStyle', 'Hidden',
         '-Command',
-        `Add-Type -AssemblyName System.Windows.Forms; Start-Sleep -Milliseconds 80; [System.Windows.Forms.SendKeys]::SendWait('^v')`
+        `Add-Type -AssemblyName System.Windows.Forms; $waited = 0; while (([int][System.Windows.Forms.Control]::ModifierKeys -band 327680) -ne 0 -and $waited -lt 1000) { Start-Sleep -Milliseconds 20; $waited += 20 }; [System.Windows.Forms.SendKeys]::SendWait('^v')`
       ], {
         windowsHide: true,
         detached: false,
