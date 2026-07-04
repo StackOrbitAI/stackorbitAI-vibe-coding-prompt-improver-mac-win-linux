@@ -1,6 +1,6 @@
 {
   "name": "stackorbitai-vibe-coding-prompt-improver",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "Vibe Coding Prompt Improver desktop utility",
   "main": "dist/main/index.js",
   "author": "StackOrbitAI <support@stackorbitai.com>",
@@ -45,10 +45,13 @@
     "files": [
       "dist/**/*",
       "build/**/*",
+      "bin/**/*",
       "package.json"
     ],
-
     "asar": true,
+    "asarUnpack": [
+      "bin/sendkeys.exe"
+    ],
     "mac": {
       "icon": "build/icon.icns",
       "category": "public.app-category.productivity",

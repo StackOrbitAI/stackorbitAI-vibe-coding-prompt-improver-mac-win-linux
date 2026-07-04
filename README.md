@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.0.24-6c5ce7?style=for-the-badge" alt="Version 1.0.24"/>
+  <img src="https://img.shields.io/badge/version-1.0.25-6c5ce7?style=for-the-badge" alt="Version 1.0.25"/>
   <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-00cec9?style=for-the-badge" alt="Platforms"/>
   <img src="https://img.shields.io/badge/license-MIT-00b894?style=for-the-badge" alt="MIT License"/>
   <img src="https://img.shields.io/badge/electron-30.1.0-47a248?style=for-the-badge&logo=electron" alt="Electron"/>
@@ -18,7 +18,7 @@
 
 ---
 
-## 📥 Direct Download Links (v1.0.24 Latest Release)
+## 📥 Direct Download Links (v1.0.25 Latest Release)
 
 > Select your operating system below for direct one-click installer downloads:
 
@@ -26,23 +26,23 @@
 
 | Architecture | Download Link | File Size | Recommended For |
 |---|---|---|---|
-| **Windows x64** | [⬇️ Download Vibe-Prompt-Improver-Windows-v1.0.24-x64.exe](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.24/Vibe-Prompt-Improver-Windows-v1.0.24-x64.exe) | ~85 MB | Standard 64-bit Intel/AMD PCs |
-| **Windows ARM64** | [⬇️ Download Vibe-Prompt-Improver-Windows-v1.0.24-arm64.exe](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.24/Vibe-Prompt-Improver-Windows-v1.0.24-arm64.exe) | ~88 MB | Snapdragon / Surface Pro ARM |
-| **Windows Universal** | [⬇️ Download Vibe-Prompt-Improver-Windows-v1.0.24.exe](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.24/Vibe-Prompt-Improver-Windows-v1.0.24.exe) | ~171 MB | All Windows PCs (Combined) |
+| **Windows x64** | [⬇️ Download Vibe-Prompt-Improver-Windows-v1.0.25-x64.exe](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.25/Vibe-Prompt-Improver-Windows-v1.0.25-x64.exe) | ~85 MB | Standard 64-bit Intel/AMD PCs |
+| **Windows ARM64** | [⬇️ Download Vibe-Prompt-Improver-Windows-v1.0.25-arm64.exe](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.25/Vibe-Prompt-Improver-Windows-v1.0.25-arm64.exe) | ~88 MB | Snapdragon / Surface Pro ARM |
+| **Windows Universal** | [⬇️ Download Vibe-Prompt-Improver-Windows-v1.0.25.exe](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.25/Vibe-Prompt-Improver-Windows-v1.0.25.exe) | ~171 MB | All Windows PCs (Combined) |
 
 ### 🍎 macOS (.dmg)
 
 | Chip Type | Download Link | File Size | Recommended For |
 |---|---|---|---|
-| **Apple Silicon** | [⬇️ Download Vibe-Prompt-Improver-Mac-v1.0.24-arm64.dmg](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.24/Vibe-Prompt-Improver-Mac-v1.0.24-arm64.dmg) | ~107 MB | Mac M1 / M2 / M3 / M4 |
-| **Intel Mac** | [⬇️ Download Vibe-Prompt-Improver-Mac-v1.0.24-x64.dmg](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.24/Vibe-Prompt-Improver-Mac-v1.0.24-x64.dmg) | ~113 MB | Intel Core Macs |
+| **Apple Silicon** | [⬇️ Download Vibe-Prompt-Improver-Mac-v1.0.25-arm64.dmg](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.25/Vibe-Prompt-Improver-Mac-v1.0.25-arm64.dmg) | ~107 MB | Mac M1 / M2 / M3 / M4 |
+| **Intel Mac** | [⬇️ Download Vibe-Prompt-Improver-Mac-v1.0.25-x64.dmg](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.25/Vibe-Prompt-Improver-Mac-v1.0.25-x64.dmg) | ~113 MB | Intel Core Macs |
 
 ### 🐧 Linux (.AppImage / .deb / .rpm)
 
 | Package Format | Architecture | Download Link | File Size |
 |---|---|---|---|
-| **AppImage** | x86_64 | [⬇️ Download Vibe-Prompt-Improver-Linux-v1.0.24-x64.AppImage](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.24/Vibe-Prompt-Improver-Linux-v1.0.24-x86_64.AppImage) | ~114 MB |
-| **Debian / Ubuntu** | amd64 (.deb) | [⬇️ Download Vibe-Prompt-Improver-Linux-v1.0.24-amd64.deb](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.24/Vibe-Prompt-Improver-Linux-v1.0.24-amd64.deb) | ~78 MB |
+| **AppImage** | x86_64 | [⬇️ Download Vibe-Prompt-Improver-Linux-v1.0.25-x64.AppImage](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.25/Vibe-Prompt-Improver-Linux-v1.0.25-x86_64.AppImage) | ~114 MB |
+| **Debian / Ubuntu** | amd64 (.deb) | [⬇️ Download Vibe-Prompt-Improver-Linux-v1.0.25-amd64.deb](https://github.com/StackOrbitAI/stackorbitAI-vibe-coding-prompt-improver-mac-win-linux/releases/download/v1.0.25/Vibe-Prompt-Improver-Linux-v1.0.25-amd64.deb) | ~78 MB |
 
 ---
 
@@ -50,7 +50,7 @@
 
 ### 🪟 Windows Setup Guide
 
-1. **Download**: Download `Vibe-Prompt-Improver-Windows-v1.0.24-x64.exe` from the table above.
+1. **Download**: Download `Vibe-Prompt-Improver-Windows-v1.0.25-x64.exe` from the table above.
 2. **Install**: Double-click the `.exe` file and follow the setup wizard.
 3. **Desktop Shortcut & Start Menu**: The installer automatically creates a **StackOrbitAI Vibe Improver** shortcut on your Desktop and in your Start Menu.
 4. **First Launch**: The app starts automatically in the background and places an icon in your System Tray (near the clock).
@@ -65,7 +65,7 @@
 
 ### 🍎 macOS Setup Guide
 
-1. **Download**: Download `Vibe-Prompt-Improver-Mac-v1.0.24-arm64.dmg` (or `x64.dmg` for Intel Macs).
+1. **Download**: Download `Vibe-Prompt-Improver-Mac-v1.0.25-arm64.dmg` (or `x64.dmg` for Intel Macs).
 2. **Install**: Double-click the `.dmg` file and drag **StackOrbitAI Vibe Improver** into your `Applications` folder.
 3. **First Launch Security**:
    - If macOS displays *"App from unidentified developer"*, open **System Settings -> Privacy & Security -> General** and click **Open Anyway**.
@@ -80,12 +80,12 @@
 
 - **AppImage**:
   ```bash
-  chmod +x Vibe-Prompt-Improver-Linux-v1.0.24-x86_64.AppImage
-  ./Vibe-Prompt-Improver-Linux-v1.0.24-x86_64.AppImage
+  chmod +x Vibe-Prompt-Improver-Linux-v1.0.25-x86_64.AppImage
+  ./Vibe-Prompt-Improver-Linux-v1.0.25-x86_64.AppImage
   ```
 - **Debian / Ubuntu (.deb)**:
   ```bash
-  sudo dpkg -i Vibe-Prompt-Improver-Linux-v1.0.24-amd64.deb
+  sudo dpkg -i Vibe-Prompt-Improver-Linux-v1.0.25-amd64.deb
   ```
 
 ---

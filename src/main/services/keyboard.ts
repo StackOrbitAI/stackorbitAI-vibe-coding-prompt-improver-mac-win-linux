@@ -1,22 +1,35 @@
 import { app } from 'electron';
 import path from 'path';
-import { execFile, exec, spawn } from 'child_process';
+import fs from 'fs';
+import { exec, spawn } from 'child_process';
+
+const isDev = !app.isPackaged;
+
+function getSendKeysPath(): string {
+  const possiblePaths = [
+    path.join(app.getAppPath(), 'bin/sendkeys.exe'),
+    path.join(__dirname, '../../bin/sendkeys.exe'),
+    path.join(process.resourcesPath, 'app.asar.unpacked/bin/sendkeys.exe'),
+    path.join(process.resourcesPath, 'bin/sendkeys.exe'),
+  ];
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) {
+      return p;
+    }
+  }
+  // Fallback to app.asar.unpacked path
+  return path.join(process.resourcesPath, 'app.asar.unpacked/bin/sendkeys.exe');
+}
 
 /**
  * Simulates Ctrl+C (Cmd+C on macOS) — 100% no visible window on Windows
- * Uses PowerShell with -WindowStyle Hidden instead of sendkeys.exe
+ * Uses sendkeys.exe compiled from C# which waits for physical modifiers release
  */
 export function simulateCopy(): Promise<void> {
   return new Promise((resolve) => {
     if (process.platform === 'win32') {
-      // PowerShell approach: completely invisible, no CMD window ever appears
-      spawn('powershell.exe', [
-        '-NoProfile',
-        '-NonInteractive',
-        '-WindowStyle', 'Hidden',
-        '-Command',
-        `Add-Type -AssemblyName System.Windows.Forms; $waited = 0; while (([int][System.Windows.Forms.Control]::ModifierKeys -band 327680) -ne 0 -and $waited -lt 1000) { Start-Sleep -Milliseconds 20; $waited += 20 }; [System.Windows.Forms.SendKeys]::SendWait('^c')`
-      ], {
+      const exePath = getSendKeysPath();
+      spawn(exePath, ['copy'], {
         windowsHide: true,
         detached: false,
         stdio: 'ignore'
@@ -36,19 +49,13 @@ export function simulateCopy(): Promise<void> {
 
 /**
  * Simulates Ctrl+V (Cmd+V on macOS) — 100% no visible window on Windows
- * Uses PowerShell with -WindowStyle Hidden instead of sendkeys.exe
+ * Uses sendkeys.exe compiled from C# which waits for physical modifiers release
  */
 export function simulatePaste(): Promise<void> {
   return new Promise((resolve) => {
     if (process.platform === 'win32') {
-      // PowerShell approach: completely invisible, no CMD window ever appears
-      spawn('powershell.exe', [
-        '-NoProfile',
-        '-NonInteractive',
-        '-WindowStyle', 'Hidden',
-        '-Command',
-        `Add-Type -AssemblyName System.Windows.Forms; $waited = 0; while (([int][System.Windows.Forms.Control]::ModifierKeys -band 327680) -ne 0 -and $waited -lt 1000) { Start-Sleep -Milliseconds 20; $waited += 20 }; [System.Windows.Forms.SendKeys]::SendWait('^v')`
-      ], {
+      const exePath = getSendKeysPath();
+      spawn(exePath, ['paste'], {
         windowsHide: true,
         detached: false,
         stdio: 'ignore'
